@@ -48,19 +48,24 @@ class MainActivity : AppCompatActivity() {
         var usuario ="12345"
         var contrasena ="12345"
 
+        //progrmacion del boton entrar
         btnEntrar.setOnClickListener(View.OnClickListener {
+
             if (txtUsuario.text.toString().contentEquals("") || txtContrasena.text.toString().contentEquals("")){
                 Toast.makeText(applicationContext,"Ingrese todos los datos requeridos para acceder",Toast.LENGTH_SHORT)
             }
+
             else if(txtUsuario.text.toString().contentEquals(usuario) && txtContrasena.text.toString().contentEquals(contrasena)){
                 Toast.makeText(applicationContext,"Accedio Correctamente",Toast.LENGTH_SHORT)
-            }
-            else{
-                Toast.makeText(applicationContext,"Los datos para acceder son incorrectos",Toast.LENGTH_SHORT)
                 val menuPrin=Intent(this,menuPrincipal::class.java)
                 startActivity(menuPrin)
                 finish()
             }
+
+            else{
+                Toast.makeText(applicationContext,"Los datos para acceder son incorrectos",Toast.LENGTH_SHORT)
+            }
+
         })
     }
 }
