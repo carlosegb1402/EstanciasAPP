@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var txtUsuario : TextView
     private lateinit var txtContrasena : TextView
     private lateinit var btnEntrar : Button
+    private lateinit var btnSalir: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         //llamado de las funciones
         iniciarComponentes()
         eventEntrar()
+        salir()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -41,6 +43,7 @@ class MainActivity : AppCompatActivity() {
         txtUsuario=findViewById(R.id.etUsuario)
         txtContrasena=findViewById(R.id.etcontrasena)
         btnEntrar=findViewById(R.id.btnEntrar)
+        btnSalir=findViewById(R.id.btnSalir)
     }
 
     //funcion para ingresar
@@ -57,7 +60,7 @@ class MainActivity : AppCompatActivity() {
 
             else if(txtUsuario.text.toString().contentEquals(usuario) && txtContrasena.text.toString().contentEquals(contrasena)){
                 Toast.makeText(applicationContext,"Accedio Correctamente",Toast.LENGTH_SHORT)
-                val menuPrin=Intent(this,menuPrincipal::class.java)
+                val menuPrin=Intent(this,MenuPrincipal::class.java)
                 startActivity(menuPrin)
                 finish()
             }
@@ -66,6 +69,12 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext,"Los datos para acceder son incorrectos",Toast.LENGTH_SHORT)
             }
 
+        })
+    }
+
+    fun salir(){
+        btnSalir.setOnClickListener(View.OnClickListener {
+            finish()
         })
     }
 }

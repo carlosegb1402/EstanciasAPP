@@ -37,6 +37,13 @@
         android:id="@+id/btnEntrar"
         ></Button>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Salir"
+        android:id="@+id/btnSalir"
+        ></Button>
+
 </LinearLayout>
 
 

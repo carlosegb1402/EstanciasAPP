@@ -23,7 +23,7 @@
             android:name=".QR"
             android:exported="false" />
         <activity
-            android:name=".menuPrincipal"
+            android:name=".MenuPrincipal"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
