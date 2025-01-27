@@ -6,14 +6,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    >
 
-    <TextView
+    <EditText
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:hint="Usuario"
+        android:id="@+id/etUsuario"
+        android:textAlignment="center"
+        ></EditText>
+
+    <EditText
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:hint="Contraseña"
+        android:id="@+id/etcontrasena"
+        android:textAlignment="center"
+        android:inputType="textPassword"
+        ></EditText>
+
+        <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="Entrar"
+        android:id="@+id/btnEntrar"
+        ></Button>
+
+</LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
