@@ -26,8 +26,7 @@ class MainActivity : AppCompatActivity() {
 
         //llamado de las funciones
         iniciarComponentes()
-        eventEntrar()
-        salir()
+        eventsBTN()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -38,7 +37,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    //funcion para iniciar los componentes
+    //conexion de los widgets del layout
     fun iniciarComponentes(){
         txtUsuario=findViewById(R.id.etUsuario)
         txtContrasena=findViewById(R.id.etcontrasena)
@@ -47,34 +46,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     //funcion para ingresar
-    fun eventEntrar(){
-        var usuario ="12345"
-        var contrasena ="12345"
+    fun eventsBTN(){
+
+        val usuario ="12345"
+        val contrasena ="12345"
 
         //progrmacion del boton entrar
         btnEntrar.setOnClickListener(View.OnClickListener {
 
-            if (txtUsuario.text.toString().contentEquals("") || txtContrasena.text.toString().contentEquals("")){
-                Toast.makeText(applicationContext,"Ingrese todos los datos requeridos para acceder",Toast.LENGTH_SHORT)
+            if (txtUsuario.text.toString().isNullOrEmpty() || txtContrasena.text.toString().isNullOrEmpty()){
+                Toast.makeText(applicationContext,"Ingrese todos los datos requeridos para acceder",Toast.LENGTH_SHORT).show()
             }
 
             else if(txtUsuario.text.toString().contentEquals(usuario) && txtContrasena.text.toString().contentEquals(contrasena)){
-                Toast.makeText(applicationContext,"Accedio Correctamente",Toast.LENGTH_SHORT)
-                val menuPrin=Intent(this,MenuPrincipal::class.java)
-                startActivity(menuPrin)
+                val menuPrinIntent=Intent(this,MenuPrincipal::class.java)
+                menuPrinIntent.putExtra("usuario",usuario)
+                startActivity(menuPrinIntent)
+                Toast.makeText(applicationContext,"Accedio Correctamente", Toast.LENGTH_SHORT).show()
                 finish()
             }
 
             else{
-                Toast.makeText(applicationContext,"Los datos para acceder son incorrectos",Toast.LENGTH_SHORT)
+                Toast.makeText(applicationContext,"Los datos para acceder son incorrectos",Toast.LENGTH_SHORT).show()
             }
 
         })
-    }
 
-    fun salir(){
+        //programacion del boton salir
         btnSalir.setOnClickListener(View.OnClickListener {
             finish()
         })
+
     }
+
 }

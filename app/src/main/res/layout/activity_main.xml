@@ -14,6 +14,7 @@
     >
 
     <EditText
+        android:text="12345"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:hint="Usuario"
@@ -22,6 +23,7 @@
         ></EditText>
 
     <EditText
+        android:text="12345"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:hint="Contraseña"

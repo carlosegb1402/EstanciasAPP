@@ -1,8 +1,14 @@
 package com.example.estanciasapp
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Size
+import android.view.View
+import android.widget.Button
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.registerForActivityResult
@@ -35,6 +41,7 @@ class QR : AppCompatActivity() {
     private lateinit var binding: ActivityQrBinding
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var barcodeScanner:BarcodeScanner
+    private var toast: Toast?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,11 +50,14 @@ class QR : AppCompatActivity() {
 
         cameraExecutor=Executors.newSingleThreadExecutor()
         barcodeScanner=BarcodeScanning.getClient()
+
+        escogerOtraOpcion()
+
         val requestPermissionLauncher=registerForActivityResult(ActivityResultContracts.RequestPermission()){isGranted->
             if(isGranted){
                 startCamera()
             }else{
-                binding.resultTV.text="No cuenta con los permisos "
+                Toast.makeText(applicationContext,"No cuenta con los permisos necesarios para usar la Camara",Toast.LENGTH_SHORT).show()
             }
 
         }
@@ -55,9 +65,15 @@ class QR : AppCompatActivity() {
 
     }
 
+    private fun escogerOtraOpcion(){
+        binding.otraOpcionBTN.setOnClickListener(View.OnClickListener {
+            finish()
+        })
+    }
+
     private fun startCamera(){
         val cameraProviderFuture=ProcessCameraProvider.getInstance(this)
-        val screenSize=Size(720,480)
+        val screenSize=Size(640,480)
         val resolutionSelector=ResolutionSelector.Builder().setResolutionStrategy(ResolutionStrategy(screenSize,ResolutionStrategy.FALLBACK_RULE_NONE)).build()
         cameraProviderFuture.addListener({
             val cameraProvider=cameraProviderFuture.get()
@@ -80,16 +96,41 @@ class QR : AppCompatActivity() {
                 for(barcode in barcodes){
                     handleBarcode(barcode)
                 }
-            }.addOnFailureListener{binding.resultTV.text="Error al scanear el codigo"}.addOnCompleteListener { imageProxy.close() }
+            }.addOnFailureListener{Toast.makeText(applicationContext,"Ocurrio un error al escanear el codigo",Toast.LENGTH_SHORT).show()}.addOnCompleteListener { imageProxy.close() }
         }
     }
     private fun handleBarcode(barcode: Barcode){
+
+        val opcionEscogida: String = intent.getStringExtra("opcion").toString()
+        val opcionesValidas = setOf("1", "2", "3", "4")
         val txt=barcode.url ?.url ?:barcode.displayValue
-        if (txt!=null){
-            binding.resultTV.text=txt
-        }else{
-            binding.resultTV.text="No se detecto el codigo"
+
+        if (txt==opcionEscogida){
+            val formularioIntent=Intent(this,Formulario::class.java)
+            formularioIntent.putExtra("opcion",txt)
+            cameraExecutor.shutdown()
+            startActivity(formularioIntent)
+            finish()
         }
+        else if (txt in opcionesValidas){
+            toast=Toast.makeText(applicationContext,"El Codigo QR No Concuerda Con La Opcion Escogida",Toast.LENGTH_SHORT)
+            toast?.show()
+            Handler(Looper.getMainLooper()).postDelayed(
+                {
+                    toast?.cancel()
+                },10
+            )
+        }
+        else{
+            toast=Toast.makeText(applicationContext,"El Codigo QR No Es Valido",Toast.LENGTH_SHORT)
+            toast?.show()
+            Handler(Looper.getMainLooper()).postDelayed(
+                {
+                    toast?.cancel()
+                },10
+            )
+        }
+
     }
 
     override fun onDestroy() {
