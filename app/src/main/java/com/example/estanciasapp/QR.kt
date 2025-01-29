@@ -2,13 +2,16 @@ package com.example.estanciasapp
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Size
 import android.view.View
 import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.registerForActivityResult
@@ -28,6 +31,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.estanciasapp.databinding.ActivityMainBinding
 import com.example.estanciasapp.databinding.ActivityQrBinding
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
@@ -41,7 +46,7 @@ class QR : AppCompatActivity() {
     private lateinit var binding: ActivityQrBinding
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var barcodeScanner:BarcodeScanner
-    private var toast: Toast?=null
+    private lateinit var msgTV:TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +55,7 @@ class QR : AppCompatActivity() {
 
         cameraExecutor=Executors.newSingleThreadExecutor()
         barcodeScanner=BarcodeScanning.getClient()
+        msgTV=binding.msgTV
 
         escogerOtraOpcion()
 
@@ -62,7 +68,6 @@ class QR : AppCompatActivity() {
 
         }
         requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
-
     }
 
     private fun escogerOtraOpcion(){
@@ -93,42 +98,33 @@ class QR : AppCompatActivity() {
         if(mediaImage!=null){
             val image = InputImage.fromMediaImage(mediaImage,imageProxy.imageInfo.rotationDegrees)
             barcodeScanner.process(image).addOnSuccessListener { barcodes->
-                for(barcode in barcodes){
-                    handleBarcode(barcode)
+                if (barcodes.isEmpty()) {
+                    msgTV.setText("")
+                } else {
+                    for (barcode in barcodes) {
+                        handleBarcode(barcode)
+                    }
                 }
             }.addOnFailureListener{Toast.makeText(applicationContext,"Ocurrio un error al escanear el codigo",Toast.LENGTH_SHORT).show()}.addOnCompleteListener { imageProxy.close() }
         }
     }
     private fun handleBarcode(barcode: Barcode){
-
         val opcionEscogida: String = intent.getStringExtra("opcion").toString()
         val opcionesValidas = setOf("1", "2", "3", "4")
         val txt=barcode.url ?.url ?:barcode.displayValue
 
         if (txt==opcionEscogida){
+            cameraExecutor.shutdown()
             val formularioIntent=Intent(this,Formulario::class.java)
             formularioIntent.putExtra("opcion",txt)
-            cameraExecutor.shutdown()
             startActivity(formularioIntent)
             finish()
         }
         else if (txt in opcionesValidas){
-            toast=Toast.makeText(applicationContext,"El Codigo QR No Concuerda Con La Opcion Escogida",Toast.LENGTH_SHORT)
-            toast?.show()
-            Handler(Looper.getMainLooper()).postDelayed(
-                {
-                    toast?.cancel()
-                },10
-            )
+            msgTV.setText("El Codigo QR No Concuerda Con La Opcion Escogida")
         }
         else{
-            toast=Toast.makeText(applicationContext,"El Codigo QR No Es Valido",Toast.LENGTH_SHORT)
-            toast?.show()
-            Handler(Looper.getMainLooper()).postDelayed(
-                {
-                    toast?.cancel()
-                },10
-            )
+            msgTV.setText("El Codigo QR No Es Valido")
         }
 
     }
@@ -137,4 +133,14 @@ class QR : AppCompatActivity() {
         super.onDestroy()
         cameraExecutor.shutdown()
     }
+
+    private fun showMSG(msg:String){
+        Snackbar.make(findViewById(android.R.id.content)
+            ,msg
+            , Snackbar.LENGTH_LONG)
+            .setBackgroundTint(Color.WHITE)
+            .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_FADE)
+            .setTextColor(ContextCompat.getColor(applicationContext,R.color.principal)).setDuration(800).show()
+    }
+
 }

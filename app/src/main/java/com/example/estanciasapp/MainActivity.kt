@@ -1,15 +1,21 @@
 package com.example.estanciasapp
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,7 +44,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     //conexion de los widgets del layout
-    fun iniciarComponentes(){
+    private fun iniciarComponentes(){
         txtUsuario=findViewById(R.id.etUsuario)
         txtContrasena=findViewById(R.id.etcontrasena)
         btnEntrar=findViewById(R.id.btnEntrar)
@@ -46,37 +52,77 @@ class MainActivity : AppCompatActivity() {
     }
 
     //funcion para ingresar
-    fun eventsBTN(){
+    private fun eventsBTN(){
+
+        //programacion del boton entrar
+        btnEntrar.setOnClickListener{
+             fnAcceder()
+
+        }
+
+        //programacion del boton salir
+        btnSalir.setOnClickListener{
+            alertExit()
+            }
+
+    }
+
+    //funcion para acceso
+    private fun fnAcceder(){
 
         val usuario ="12345"
         val contrasena ="12345"
 
-        //progrmacion del boton entrar
-        btnEntrar.setOnClickListener(View.OnClickListener {
+        if (txtUsuario.text.toString().isEmpty() && txtContrasena.text.toString().isEmpty()){
+            showMSG("Ingrese los datos requeridos para acceder")
+        }
 
-            if (txtUsuario.text.toString().isNullOrEmpty() || txtContrasena.text.toString().isNullOrEmpty()){
-                Toast.makeText(applicationContext,"Ingrese todos los datos requeridos para acceder",Toast.LENGTH_SHORT).show()
-            }
 
-            else if(txtUsuario.text.toString().contentEquals(usuario) && txtContrasena.text.toString().contentEquals(contrasena)){
-                val menuPrinIntent=Intent(this,MenuPrincipal::class.java)
-                menuPrinIntent.putExtra("usuario",usuario)
-                startActivity(menuPrinIntent)
-                Toast.makeText(applicationContext,"Accedio Correctamente", Toast.LENGTH_SHORT).show()
-                finish()
-            }
+        else if (txtContrasena.text.toString().isEmpty()){
+            showMSG("Ingrese La Contraseña")
+        }
 
-            else{
-                Toast.makeText(applicationContext,"Los datos para acceder son incorrectos",Toast.LENGTH_SHORT).show()
-            }
+        else if (txtUsuario.text.toString().isEmpty()){
+            showMSG("Ingrese El Usuario")
+        }
 
-        })
+        else if(txtUsuario.text.toString()==usuario && txtContrasena.text.toString()==contrasena){
+            val menuPrinIntent=Intent(this,MenuPrincipal::class.java)
+            menuPrinIntent.putExtra("usuario",usuario)
+            limpiarInputs()
+            startActivity(menuPrinIntent)
+        }
 
-        //programacion del boton salir
-        btnSalir.setOnClickListener(View.OnClickListener {
-            finish()
-        })
+        else{
+            showMSG("Datos Incorrectos")
+        }
+    }
 
+    private fun limpiarInputs(){
+        txtUsuario.setText("")
+        txtContrasena.setText("")
+    }
+
+    private fun showMSG(msg:String){
+            Snackbar.make(findViewById(android.R.id.content)
+            ,msg
+            ,Snackbar.LENGTH_LONG)
+            .setBackgroundTint(Color.WHITE)
+            .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_FADE)
+            .setTextColor(ContextCompat.getColor(applicationContext,R.color.principal)).setDuration(800).show()
+    }
+    private  fun alertExit(){
+        AlertDialog.Builder(this)
+            .setMessage("¿Estás seguro de que quieres salir?")
+            .setCancelable(false).setTitle("Aplicacion")
+            .setPositiveButton("Sí") { _, _ -> finish()}
+            .setNegativeButton("No", null)
+            .show()
+    }
+
+    @SuppressLint("MissingSuperCall")
+    override fun onBackPressed() {
+        alertExit()
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.estanciasapp
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -7,6 +8,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -80,6 +82,21 @@ class MenuPrincipal : AppCompatActivity() {
         val intent=Intent(this,QR::class.java)
         intent.putExtra("opcion",opcion)
         startActivity(intent)
+    }
+
+
+    private  fun alertExit(){
+        AlertDialog.Builder(this)
+            .setMessage("¿Desea volver al menu principal?")
+            .setCancelable(false).setTitle("Aplicacion")
+            .setPositiveButton("Sí") { _, _ -> finish()}
+            .setNegativeButton("No", null)
+            .show()
+    }
+
+    @SuppressLint("MissingSuperCall")
+    override fun onBackPressed() {
+        alertExit()
     }
 
 }
