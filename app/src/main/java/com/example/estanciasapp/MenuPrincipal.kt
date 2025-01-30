@@ -16,10 +16,10 @@ import androidx.core.view.WindowInsetsCompat
 class MenuPrincipal : AppCompatActivity() {
 
     //declaracion de los objetos
-    private lateinit var opcion1BTN : Button
-    private lateinit var opcion2BTN : Button
-    private lateinit var opcion3BTN : Button
-    private lateinit var opcion4BTN : Button
+    private lateinit var opcion1BTN : TextView
+    private lateinit var opcion2BTN : TextView
+    private lateinit var opcion3BTN : TextView
+    private lateinit var opcion4BTN : TextView
     private lateinit var usuarioTV : TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
