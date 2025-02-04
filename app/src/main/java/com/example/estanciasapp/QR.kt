@@ -100,41 +100,51 @@ class QR : AppCompatActivity() {
             }.addOnFailureListener{Toast.makeText(applicationContext,"Ocurrio un error al escanear el codigo",Toast.LENGTH_SHORT).show()}.addOnCompleteListener { imageProxy.close() }
         }
     }
-    private fun handleBarcode(barcode: Barcode){
-        val opcionEscogida: String = intent.getStringExtra("opcion").toString()
-        val opcionesValidas = setOf("1", "2", "3", "4")
-        val txt=barcode.url ?.url ?:barcode.displayValue
-        val partes= txt?.split("\n")
+//,
+    private fun handleBarcode(barcode: Barcode) {
 
-        val id= partes?.get(0)
-        val nombre=partes?.get(1)
-        val numEquipo=partes?.get(2)
-        val area=partes?.get(3)
-        val modelo=partes?.get(4)
+        val txt = barcode.url?.url ?: barcode.displayValue
 
+        val validacion = listOf(
+            "Blower",
+            "Punta",
+            "Bomba",
+            "Filtro Cartucho",
+            "Ozono",
+            "Filtro Carbón",
+            "Filtro Zeolita",
+            "UV",
+            "Calentador 1800",
+            "Gen 450",
+            "Transf 500",
+            "Chiller 20",
+            "Cooler",
+            "Extractor",
+            "Serpentine",
+            "Bomba Agua Dulce",
+            "MiniSplit"
+        )
 
-        if (txt==opcionEscogida){
+        val regex = Regex("\\b(${validacion.joinToString("|")})\\b", RegexOption.IGNORE_CASE)
+
+        val text = txt ?: ""
+
+        if (regex.containsMatchIn(text)) {
 
             cameraExecutor.shutdown()
 
-            val formularioIntent=Intent(this,Formulario::class.java)
+            val formularioIntent = Intent(this, Formulario::class.java)
 
-            formularioIntent.putExtra("id",id)
-            formularioIntent.putExtra("nombre",nombre)
-            formularioIntent.putExtra("numEquipo",numEquipo)
-            formularioIntent.putExtra("area",area)
-            formularioIntent.putExtra("modelo",modelo)
+            formularioIntent.putExtra("informacion",txt)
 
             startActivity(formularioIntent)
 
             finish()
         }
-        else if (txt in opcionesValidas){
-            msgTV.setText("El Codigo QR Es Incorrecto")
-        }
         else{
-            msgTV.setText("El Codigo QR No Es Valido")
+             msgTV.setText("El Codigo QR No Es Valido")
         }
+
 
     }
 
@@ -142,5 +152,7 @@ class QR : AppCompatActivity() {
         super.onDestroy()
         cameraExecutor.shutdown()
     }
+
+
 
 }

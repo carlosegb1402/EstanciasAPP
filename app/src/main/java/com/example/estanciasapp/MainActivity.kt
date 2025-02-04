@@ -40,6 +40,9 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
+        val int=Intent(this,Formulario::class.java)
+        startActivity(int)
+
         loginPreferences=getSharedPreferences("loginPref", MODE_PRIVATE)
         loginPrefEditor=loginPreferences.edit()
         saveLogin=loginPreferences.getBoolean("saveLogin",false)

@@ -11,37 +11,33 @@
 
 
     <LinearLayout
-        android:layout_margin="40sp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
         >
 
-    <EditText
-        android:textStyle="bold"
-        android:textSize="25sp"
-        android:textColor="@color/black"
-        android:textColorHint="@color/black"
-        android:layout_margin="10sp"
-        android:id="@+id/nombreET"
-        android:textAlignment="center"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="Equipo"
-        android:enabled="false"
-        android:background="@drawable/background_edit_text"
-        ></EditText>
+        <EditText
+            android:id="@+id/nombreET"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:background="@drawable/background_edit_text"
+            android:enabled="false"
+            android:hint="Equipo"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:textSize="25sp"
+            android:textStyle="bold"></EditText>
 
         <EditText
-
             android:textStyle="bold"
             android:textSize="25sp"
             android:textColor="@color/black"
             android:textColorHint="@color/black"
-            android:layout_margin="10sp"
+            android:layout_marginTop="8dp"
             android:id="@+id/numET"
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_height="50dp"
             android:textAlignment="center"
             android:hint="Numero"
@@ -50,15 +46,14 @@
          ></EditText>
 
         <EditText
-
+            android:layout_marginTop="8dp"
             android:textStyle="bold"
             android:textSize="25sp"
             android:textColor="@color/black"
             android:textColorHint="@color/black"
             android:textAlignment="center"
-            android:layout_margin="10sp"
             android:id="@+id/modeloET"
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_height="50dp"
             android:hint="Modelo"
             android:enabled="false"
@@ -67,15 +62,14 @@
 
 
         <EditText
-
+            android:layout_marginTop="8dp"
             android:textStyle="bold"
             android:textSize="25sp"
             android:textColor="@color/black"
             android:textColorHint="@color/black"
             android:textAlignment="center"
-            android:layout_margin="10sp"
             android:id="@+id/areaET"
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_height="50dp"
             android:hint="Area"
             android:enabled="false"
@@ -84,46 +78,47 @@
 
 
         <EditText
+            android:padding="5sp"
+            android:layout_marginTop="8dp"
             android:textStyle="bold"
             android:textSize="25sp"
             android:textColor="@color/black"
-            android:textColorHint="@color/black"
             android:textAlignment="center"
             android:id="@+id/estFalloET"
-            android:layout_margin="10sp"
-            android:layout_width="match_parent"
-            android:hint="Estado De Fallo"
+            android:layout_width="300dp"
+            android:hint="Estado Del Fallo"
             android:enabled="true"
             android:background="@drawable/background_edit_text"
             android:layout_height="50dp"
             ></EditText>
 
         <EditText
+            android:padding="5sp"
+            android:layout_marginTop="8dp"
             android:textStyle="bold"
             android:textSize="25sp"
             android:textColor="@color/black"
-            android:textColorHint="@color/black"
-            android:layout_margin="10sp"
             android:textAlignment="center"
             android:id="@+id/etObs"
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_height="100dp"
             android:hint="Observaciones"
             android:enabled="true"
             android:background="@drawable/background_edit_text"
             ></EditText>
         <LinearLayout
+            android:layout_marginTop="15dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="horizontal">
             <ImageButton
-                android:src="@android:drawable/ic_menu_revert"
-                android:scaleType="center"
+                android:src="@drawable/mob"
+                android:scaleType="centerInside"
                 android:layout_margin="5sp"
-                android:background="@drawable/background_btn"
+                android:background="@color/cardview_shadow_end_color"
                 android:layout_marginTop="8dp"
-                android:layout_width="50dp"
+                android:layout_width="35dp"
                 android:layout_height="55dp"
                 android:id="@+id/btnLimpiar"
                 android:textSize="200dp"
