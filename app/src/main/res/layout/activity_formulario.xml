@@ -5,29 +5,155 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/principal"
     tools:context=".Formulario">
 
 
 
     <LinearLayout
+        android:layout_margin="40sp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        >
 
-     <TextView
-         android:textSize="20dp"
-         android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
-         android:text="Num.: "
-         ></TextView>
     <EditText
-        android:id="@+id/etNum"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="Num. De"
+        android:textStyle="bold"
+        android:textSize="25sp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/black"
+        android:layout_margin="10sp"
+        android:id="@+id/nombreET"
+        android:textAlignment="center"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Equipo"
         android:enabled="false"
+        android:background="@drawable/background_edit_text"
         ></EditText>
+
+        <EditText
+
+            android:textStyle="bold"
+            android:textSize="25sp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:layout_margin="10sp"
+            android:id="@+id/numET"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:textAlignment="center"
+            android:hint="Numero"
+            android:enabled="false"
+            android:background="@drawable/background_edit_text"
+         ></EditText>
+
+        <EditText
+
+            android:textStyle="bold"
+            android:textSize="25sp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:textAlignment="center"
+            android:layout_margin="10sp"
+            android:id="@+id/modeloET"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Modelo"
+            android:enabled="false"
+            android:background="@drawable/background_edit_text"
+            ></EditText>
+
+
+        <EditText
+
+            android:textStyle="bold"
+            android:textSize="25sp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:textAlignment="center"
+            android:layout_margin="10sp"
+            android:id="@+id/areaET"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Area"
+            android:enabled="false"
+            android:background="@drawable/background_edit_text"
+            ></EditText>
+
+
+        <EditText
+            android:textStyle="bold"
+            android:textSize="25sp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:textAlignment="center"
+            android:id="@+id/estFalloET"
+            android:layout_margin="10sp"
+            android:layout_width="match_parent"
+            android:hint="Estado De Fallo"
+            android:enabled="true"
+            android:background="@drawable/background_edit_text"
+            android:layout_height="50dp"
+            ></EditText>
+
+        <EditText
+            android:textStyle="bold"
+            android:textSize="25sp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:layout_margin="10sp"
+            android:textAlignment="center"
+            android:id="@+id/etObs"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:hint="Observaciones"
+            android:enabled="true"
+            android:background="@drawable/background_edit_text"
+            ></EditText>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <ImageButton
+                android:src="@android:drawable/ic_menu_revert"
+                android:scaleType="center"
+                android:layout_margin="5sp"
+                android:background="@drawable/background_btn"
+                android:layout_marginTop="8dp"
+                android:layout_width="50dp"
+                android:layout_height="55dp"
+                android:id="@+id/btnLimpiar"
+                android:textSize="200dp"
+                android:fontFamily="@font/anton"
+                app:tint="@color/white"></ImageButton>
+            <Button
+                android:layout_margin="5sp"
+                android:textColor="@color/white"
+                android:background="@drawable/background_btn"
+                android:layout_marginTop="8dp"
+                android:layout_width="120dp"
+                android:layout_height="55dp"
+                android:text="Cancelar"
+                android:id="@+id/btnCancelar"
+                android:textSize="20dp"
+                android:fontFamily="@font/anton"
+                ></Button>
+            <Button
+                android:layout_margin="5sp"
+                android:textColor="@color/white"
+                android:background="@drawable/background_btn"
+                android:layout_marginTop="8dp"
+                android:layout_width="120dp"
+                android:layout_height="55dp"
+                android:text="Registrar"
+                android:id="@+id/btnRegistrar"
+                android:textSize="20dp"
+                android:fontFamily="@font/anton"
+                ></Button>
+        </LinearLayout>
 
     </LinearLayout>
 

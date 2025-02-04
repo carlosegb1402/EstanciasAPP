@@ -57,8 +57,6 @@ class QR : AppCompatActivity() {
         barcodeScanner=BarcodeScanning.getClient()
         msgTV=binding.msgTV
 
-        escogerOtraOpcion()
-
         val requestPermissionLauncher=registerForActivityResult(ActivityResultContracts.RequestPermission()){isGranted->
             if(isGranted){
                 startCamera()
@@ -68,12 +66,6 @@ class QR : AppCompatActivity() {
 
         }
         requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
-    }
-
-    private fun escogerOtraOpcion(){
-        binding.otraOpcionBTN.setOnClickListener(View.OnClickListener {
-            finish()
-        })
     }
 
     private fun startCamera(){
@@ -112,16 +104,33 @@ class QR : AppCompatActivity() {
         val opcionEscogida: String = intent.getStringExtra("opcion").toString()
         val opcionesValidas = setOf("1", "2", "3", "4")
         val txt=barcode.url ?.url ?:barcode.displayValue
+        val partes= txt?.split("\n")
+
+        val id= partes?.get(0)
+        val nombre=partes?.get(1)
+        val numEquipo=partes?.get(2)
+        val area=partes?.get(3)
+        val modelo=partes?.get(4)
+
 
         if (txt==opcionEscogida){
+
             cameraExecutor.shutdown()
+
             val formularioIntent=Intent(this,Formulario::class.java)
-            formularioIntent.putExtra("opcion",txt)
+
+            formularioIntent.putExtra("id",id)
+            formularioIntent.putExtra("nombre",nombre)
+            formularioIntent.putExtra("numEquipo",numEquipo)
+            formularioIntent.putExtra("area",area)
+            formularioIntent.putExtra("modelo",modelo)
+
             startActivity(formularioIntent)
+
             finish()
         }
         else if (txt in opcionesValidas){
-            msgTV.setText("El Codigo QR No Concuerda Con La Opcion Escogida")
+            msgTV.setText("El Codigo QR Es Incorrecto")
         }
         else{
             msgTV.setText("El Codigo QR No Es Valido")
@@ -132,15 +141,6 @@ class QR : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         cameraExecutor.shutdown()
-    }
-
-    private fun showMSG(msg:String){
-        Snackbar.make(findViewById(android.R.id.content)
-            ,msg
-            , Snackbar.LENGTH_LONG)
-            .setBackgroundTint(Color.WHITE)
-            .setAnimationMode(BaseTransientBottomBar.ANIMATION_MODE_FADE)
-            .setTextColor(ContextCompat.getColor(applicationContext,R.color.principal)).setDuration(800).show()
     }
 
 }
