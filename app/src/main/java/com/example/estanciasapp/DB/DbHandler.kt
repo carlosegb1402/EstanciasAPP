@@ -1,4 +1,4 @@
-package com.example.estanciasapp.db
+package com.example.estanciasapp.DB
 
 import android.content.ContentValues
 import android.content.Context
@@ -19,15 +19,16 @@ val COL_LABFAL="labfal"
 class DbHandler (var context:Context):SQLiteOpenHelper(context, DATABASE_NAME,null,1){
     override fun onCreate(db: SQLiteDatabase?) {
 
-        val createTable="CREATE TABLE "+ TABLE_NAME+" (\n" +
-                COL_IDFAL+" int NOT NULL AUTO_INCREMENT,\n" +
-                COL_EQPFAL+" int DEFAULT NULL,\n" +
-                COL_FECFAL+" date DEFAULT (CURRENT_TIMESTAMP),\n" +
-                COL_ESTFAL+" int DEFAULT '1',\n" +
-                COL_OBSFAL+" varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,\n" +
-                COL_LABFAL+" int DEFAULT '1',\n" +
-                "PRIMARY KEY ("+ COL_IDFAL+")\n" +
-                ") ENGINE=InnoDB AUTO_INCREMENT=353 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;"
+        val createTable="""
+            CREATE TABLE $TABLE_NAME (
+                $COL_IDFAL INTEGER PRIMARY KEY AUTOINCREMENT,
+                $COL_EQPFAL INTEGER DEFAULT NULL,
+                $COL_FECFAL TEXT DEFAULT CURRENT_TIMESTAMP,
+                $COL_ESTFAL INTEGER DEFAULT 1,
+                $COL_OBSFAL TEXT DEFAULT NULL,
+                $COL_LABFAL INTEGER DEFAULT 1
+            );
+        """.trimIndent()
 
         db?.execSQL(createTable)
 

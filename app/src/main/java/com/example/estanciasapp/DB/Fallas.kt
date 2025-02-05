@@ -1,6 +1,4 @@
-package com.example.estanciasapp.db
-
-import java.util.Date
+package com.example.estanciasapp.DB
 
 class Fallas {
     var idfal: Int = 0

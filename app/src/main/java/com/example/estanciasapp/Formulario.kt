@@ -12,8 +12,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.estanciasapp.db.DbHandler
-import com.example.estanciasapp.db.Fallas
+import com.example.estanciasapp.DB.DbHandler
+import com.example.estanciasapp.DB.Fallas
 
 class Formulario : AppCompatActivity() {
     //edit text
