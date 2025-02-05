@@ -37,9 +37,9 @@ class Formulario : AppCompatActivity() {
         iniciarComponentes()
         eventsBTN()
 
-        val values=intent.getStringExtra("informacion").toString().split("\n")
+        val values=intent.getStringExtra("informacion").toString().split(",")
 
-        if (values.isNotEmpty() && values.size==5) {
+        if (values.isNotEmpty() && values.size==6) {
 
             name=   values[1]
             num=    values[2]
