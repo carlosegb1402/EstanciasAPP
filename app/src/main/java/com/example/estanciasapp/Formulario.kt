@@ -109,9 +109,20 @@ class Formulario : AppCompatActivity() {
                 showMSG("Campos Vacios")
             }
             else{
-                val fallas=Fallas(id.toInt(),estadoET.text.toString().toInt(),observacionesET.text.toString(),laboratorio.toInt())
-                val db=DbHandler(this)
-                db.insertDATA(fallas)
+                if (estadoET.text.toString().toInt()>4){
+                    showMSG("Ingrese un Estado del 1 al 4 Solamente")
+                }
+                else {
+                    val fallas = Fallas(
+                        id.toInt(),
+                        estadoET.text.toString().toInt(),
+                        observacionesET.text.toString(),
+                        laboratorio.toInt()
+                    )
+                    val db = DbHandler(this)
+                    db.insertDATA(fallas)
+                    limpiar()
+                }
             }
 
         }
