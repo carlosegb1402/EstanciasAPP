@@ -46,11 +46,12 @@ class Formulario : AppCompatActivity() {
         eventsBTN()
 
         //obtener infromacion del intent y split
-        val values=intent.getStringExtra("informacion").toString().split(",")
+        val values = intent.getStringExtra("informacion")?.split(",") ?: listOf()
+
 
 
         //condicion para comprobar los datos recibidos
-        if (values.isNotEmpty() && values.size==6) {
+        if (values.size==6) {
             id = values[0]
             nombre=   values[1]
             numero=    values[2]
@@ -108,8 +109,8 @@ class Formulario : AppCompatActivity() {
                 showMSG("Campos Vacios")
             }
             else{
-                var fallas=Fallas(id.toInt(),estadoET.text.toString().toInt(),observacionesET.text.toString(),laboratorio.toInt())
-                var db=DbHandler(this)
+                val fallas=Fallas(id.toInt(),estadoET.text.toString().toInt(),observacionesET.text.toString(),laboratorio.toInt())
+                val db=DbHandler(this)
                 db.insertDATA(fallas)
             }
 

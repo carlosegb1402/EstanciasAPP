@@ -117,7 +117,6 @@
             android:background="@drawable/background_edit_text"
             ></EditText>
 
-
         <EditText
             android:padding="5sp"
             android:layout_marginTop="8dp"
@@ -131,9 +130,11 @@
             android:enabled="true"
             android:background="@drawable/background_edit_text"
             android:layout_height="50dp"
+            android:inputType="number"
             ></EditText>
 
         <EditText
+            android:inputType="text"
             android:padding="5sp"
             android:layout_marginTop="8dp"
             android:textStyle="bold"
@@ -147,6 +148,7 @@
             android:enabled="true"
             android:background="@drawable/background_edit_text"
             ></EditText>
+
         <LinearLayout
             android:layout_marginTop="15dp"
             android:layout_width="match_parent"
