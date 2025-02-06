@@ -33,8 +33,6 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        val int=Intent(this,Formulario::class.java)
-        startActivity(int)
 
         loginPreferences=getSharedPreferences("loginPref", MODE_PRIVATE)
         loginPrefEditor=loginPreferences.edit()
@@ -44,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         iniciarComponentes()
         eventsBTN()
 
-        if (saveLogin==true){
+        if (saveLogin){
             etUsuario.setText(loginPreferences.getString("usuario",""))
             etContrasena.setText(loginPreferences.getString("contrasena",""))
             recordarCB.isChecked=true
@@ -94,6 +92,7 @@ class MainActivity : AppCompatActivity() {
            loginPrefEditor.commit()
         }
         else{
+         limpiarInputs()
          loginPrefEditor.clear()
          loginPrefEditor.commit()
         }
@@ -121,7 +120,7 @@ class MainActivity : AppCompatActivity() {
 
         else if(etUsuario.text.toString()==usuario && etContrasena.text.toString()==contrasena){
                 fnRecordar()
-                qrActivity(usuario)
+            usuario.qrActivity()
             }
 
         else{
@@ -130,9 +129,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     //fn ir activity qr
-    private fun qrActivity(usuario:String){
-        val menuPrinIntent=Intent(this,QR::class.java)
-        menuPrinIntent.putExtra("usuario",usuario)
+    private fun String.qrActivity() {
+        val menuPrinIntent=Intent(this@MainActivity,QR::class.java)
+        menuPrinIntent.putExtra("usuario", this)
         startActivity(menuPrinIntent)
         finish()
     }
@@ -159,6 +158,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     ///programacion boton atras de android
+    @Deprecated("This method has been deprecated in favor of using the\n      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.\n      The OnBackPressedDispatcher controls how back button events are dispatched\n      to one or more {@link OnBackPressedCallback} objects.")
     @SuppressLint("MissingSuperCall")
     override fun onBackPressed() {
         alertExit()

@@ -66,6 +66,7 @@
                 android:textSize="20dp"></EditText>
 
             <CheckBox
+                android:buttonTint="@color/principal"
                 android:id="@+id/recordarCB"
                 android:textColor="@color/principal"
                 android:textStyle="bold"

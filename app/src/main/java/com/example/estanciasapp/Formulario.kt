@@ -105,26 +105,32 @@ class Formulario : AppCompatActivity() {
 
         //boton registrar
         registrarBTN.setOnClickListener{
-            if(observacionesET.text.toString().isEmpty()||estadoET.text.toString().isEmpty()){
-                showMSG("Campos Vacios")
-            }
-            else{
-                if (estadoET.text.toString().toInt()>4){
-                    showMSG("Ingrese un Estado del 1 al 4 Solamente")
-                }
-                else {
-                    val fallas = Fallas(
-                        id.toInt(),
-                        estadoET.text.toString().toInt(),
-                        observacionesET.text.toString(),
-                        laboratorio.toInt()
-                    )
-                    val db = DbHandler(this)
-                    db.insertDATA(fallas)
-                    limpiar()
-                }
-            }
+            AlertDialog.Builder(this)
+                .setMessage("¿Seguro que desea realizar el registro?")
+                .setCancelable(false).setTitle("Confirmacion")
+                .setPositiveButton("Sí") { _, _ ->
 
+                    if(observacionesET.text.toString().isEmpty()||estadoET.text.toString().isEmpty()){
+                    showMSG("Campos Vacios")
+                }
+                else{
+                    if (estadoET.text.toString().toInt()>4){
+                        showMSG("Ingrese un Estado del 1 al 4 Solamente")
+                    }
+                    else {
+                        val fallas = Fallas(
+                            id.toInt(),
+                            estadoET.text.toString().toInt(),
+                            observacionesET.text.toString(),
+                            laboratorio.toInt()
+                        )
+                        val db = DbHandler(this)
+                        db.insertDATA(fallas)
+                        limpiar()
+                    }
+                }}
+                .setNegativeButton("No", null)
+                .show()
         }
     }
 
