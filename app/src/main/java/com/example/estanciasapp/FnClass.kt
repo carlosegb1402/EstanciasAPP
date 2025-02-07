@@ -10,8 +10,8 @@ import android.widget.TextView
 import android.widget.Toast
 
 
-class FnClass {
 
+class FnClass {
     fun haveNetwork(context:Context):Boolean{
         val connectivityManager=context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val networkCapabilities=connectivityManager.activeNetwork?: return false

@@ -2,19 +2,29 @@ package com.example.estanciasapp
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.icu.util.LocaleData
+import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.estanciasapp.DB.DbHandler
 import com.example.estanciasapp.DB.Fallas
+import java.sql.Date
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Locale
+
 
 class Formulario : AppCompatActivity() {
 
@@ -64,7 +74,6 @@ class Formulario : AppCompatActivity() {
             actQR()
         }
 
-        // Función para manejar botones
         setButtonListeners()
     }
 
@@ -101,16 +110,24 @@ class Formulario : AppCompatActivity() {
         }
     }
 
+    fun obtenerFechaActual(): String {
+        val formatoFecha = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val fechaActual = Calendar.getInstance().time
+        return formatoFecha.format(fechaActual)
+    }
+
+
     private fun fnRegistrar() {
-        val estado = estadoET.text.toString().toIntOrNull()
+
+        val estado = estadoET.text.toString().toInt()
         val observaciones = observacionesET.text.toString()
 
-        if (estado == null || observaciones.isEmpty()) {
+        if (estadoET.text.isEmpty() || observacionesET.text.isEmpty()) {
             showToast("Campos Vacíos o inválidos")
             return
         }
 
-        val fallas = Fallas(eqpfal = id.toInt(), estfal = estado, obsfal = observaciones, labfal = laboratorio.toInt())
+        val fallas = Fallas(eqpfal = id.toInt(), fecfal = obtenerFechaActual(), estfal = estado, obsfal = observaciones, labfal = laboratorio.toInt())
         val db = DbHandler(this)
 
         if (estado > 4) {
@@ -118,57 +135,67 @@ class Formulario : AppCompatActivity() {
             return
         }
 
-        // Verificar conexión a Internet
         if (FnClass().haveNetwork(this)) {
-            sendToServer(fallas)
-            limpiar()
-        } else {
+            syncDataWithServer()
+
+            Handler().postDelayed({
+                sendToServer(fallas,"Registro Subido Correctamente")
+                limpiar()
+            }, 1000)
+    observacionesET.setText(obtenerFechaActual())
+        }
+        else {
+            showToast("No hay conexion a internet")
             db.insertDATA(fallas)
             limpiar()
         }
     }
 
+    private fun syncDataWithServer() {
+        val db = DbHandler(this)
+        val fallasList = db.getPendingFallas()
+        var num=0.0
 
-    private fun sendToServer(falla: Fallas) {
-        val url = "http://192.168.1.77/wServices/registrarFalla.php"
+        fallasList.forEach { falla ->
+            if (FnClass().haveNetwork(this) && fallasList.isNotEmpty()) {
+                sendToServer(falla,num.toString())
+            }
+
+        }
+        db.deleteAllFallas()
+    }
+
+
+    private fun sendToServer(falla: Fallas,msg:String) {
+        val db = DbHandler(this)
+        val url = "http://172.16.13.213/wServices/registrarFalla.php"
+
         val stringRequest = object : StringRequest(
             Method.POST, url,
             Response.Listener { response ->
-                if (response.contains("Falla registrada exitosamente")) showToast("Registro Subido Correctamente")
-                else {
-                    val db = DbHandler(this)
-                    db.insertDATA(falla)
-                    limpiar()
-                }
+                if (response.contains("Falla registrada exitosamente")) showToast(msg)
             },
             Response.ErrorListener { error ->
-                showToast("Error de conexión con el servidor: ${error.message}")
+                db.insertDATA(falla)
+                showToast("Error de conexión con el servidor")
             }
         ) {
             override fun getParams(): MutableMap<String, String> {
                 return hashMapOf(
                     "eqpfal" to falla.eqpfal.toString(),
+                    "fecfal" to falla.fecfal,
                     "estfal" to falla.estfal.toString(),
                     "obsfal" to falla.obsfal,
                     "labfal" to falla.labfal.toString()
                 )
             }
         }
-        Volley.newRequestQueue(this).add(stringRequest)
+
+
+            Volley.newRequestQueue(this).add(stringRequest)
+
     }
 
-    private fun syncDataWithServer() {
-        val db = DbHandler(this)
-        val fallasList = db.getPendingFallas()
-
-        fallasList.forEach { falla ->
-            if (FnClass().haveNetwork(this)) {
-                showToast("Registros Sincronizados")
-                sendToServer(falla)
-                db.dropTable()
-            }
-        }
-    }
 
     private fun limpiar() {
         observacionesET.setText("")

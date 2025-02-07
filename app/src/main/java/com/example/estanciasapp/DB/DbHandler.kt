@@ -23,7 +23,7 @@ class DbHandler (private var context:Context):SQLiteOpenHelper(context, DATABASE
             CREATE TABLE $TABLE_NAME (
                 $COL_IDFAL INTEGER PRIMARY KEY AUTOINCREMENT,
                 $COL_EQPFAL INTEGER DEFAULT NULL,
-                $COL_FECFAL TEXT DEFAULT CURRENT_TIMESTAMP,
+                $COL_FECFAL TEXT DEFAULT NULL,
                 $COL_ESTFAL INTEGER DEFAULT 1,
                 $COL_OBSFAL TEXT DEFAULT NULL,
                 $COL_LABFAL INTEGER DEFAULT 1
@@ -44,6 +44,7 @@ class DbHandler (private var context:Context):SQLiteOpenHelper(context, DATABASE
         val cv=ContentValues()
 
         cv.put(COL_EQPFAL,fallas.eqpfal)
+        cv.put(COL_FECFAL,fallas.fecfal)
         cv.put(COL_ESTFAL,fallas.estfal)
         cv.put(COL_OBSFAL,fallas.obsfal)
         cv.put(COL_LABFAL,fallas.labfal)
@@ -67,6 +68,7 @@ class DbHandler (private var context:Context):SQLiteOpenHelper(context, DATABASE
             do {
                 val fallas = Fallas(
                     cursor.getInt(cursor.getColumnIndexOrThrow(COL_EQPFAL)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COL_FECFAL)),
                     cursor.getInt(cursor.getColumnIndexOrThrow(COL_ESTFAL)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COL_OBSFAL)),
                     cursor.getInt(cursor.getColumnIndexOrThrow(COL_LABFAL))
@@ -78,12 +80,18 @@ class DbHandler (private var context:Context):SQLiteOpenHelper(context, DATABASE
         return fallasList
     }
 
-    fun dropTable() {
+    fun deleteAllFallas() {
         val db = this.writableDatabase
-        val dropTableQuery = "DROP TABLE IF EXISTS $TABLE_NAME"
-        db.execSQL(dropTableQuery)
-        Toast.makeText(context, "Tabla eliminada correctamente", Toast.LENGTH_SHORT).show()
+        val result = db.delete(TABLE_NAME, null, null)
+
+        if (result > 0) {
+            Toast.makeText(context, "Todos los registros locales han sido eliminados", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context, "Error al eliminar los registros locales", Toast.LENGTH_SHORT).show()
+        }
     }
+
+
 
 
 
