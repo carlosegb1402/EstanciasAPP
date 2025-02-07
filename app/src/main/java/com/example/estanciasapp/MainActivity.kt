@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
+        var classs=FnClass()
 
         loginPreferences=getSharedPreferences("loginPref", MODE_PRIVATE)
         loginPrefEditor=loginPreferences.edit()
@@ -120,8 +121,8 @@ class MainActivity : AppCompatActivity() {
 
         else if(etUsuario.text.toString()==usuario && etContrasena.text.toString()==contrasena){
                 fnRecordar()
-            usuario.qrActivity()
-            }
+                usuario.qrActivity()
+        }
 
         else{
             showMSG("Datos Incorrectos")

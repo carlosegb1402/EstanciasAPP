@@ -9,188 +9,184 @@
     tools:context=".Formulario">
 
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:orientation="vertical"
-        >
-        
-            <TextView
-            android:layout_marginLeft="60dp"
-            android:layout_width="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/jetbrains_mono_semibold"
             android:text="Nombre Del Equipo:"
-            android:textSize="20sp"
             android:textColor="@color/white"
-            android:layout_gravity="start"
-            android:textStyle="bold"
-            ></TextView>
-        
+            android:textSize="20sp"></TextView>
+
         <EditText
             android:id="@+id/nombreET"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:background="@drawable/background_edit_text"
             android:enabled="false"
+            android:fontFamily="@font/jetbrains_mono_semibold"
             android:hint="Equipo"
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textColorHint="@color/black"
             android:textSize="20sp"
             android:textStyle="bold"></EditText>
+
         <TextView
-            android:layout_marginLeft="60dp"
-            android:layout_width="wrap_content"
+            android:fontFamily="@font/jetbrains_mono_semibold"
+            android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:text="Numero Del Equipo:"
-            android:textSize="20sp"
             android:textColor="@color/white"
-            android:layout_gravity="start"
-            android:textStyle="bold"
-            ></TextView>
-        <EditText
-            android:textStyle="bold"
             android:textSize="20sp"
-            android:textColor="@color/black"
-            android:textColorHint="@color/black"
-            android:layout_marginTop="8dp"
+            android:textStyle="bold"></TextView>
+
+        <EditText
             android:id="@+id/numeroET"
             android:layout_width="300dp"
             android:layout_height="50dp"
-            android:textAlignment="center"
-            android:hint="Numero"
-            android:enabled="false"
-            android:background="@drawable/background_edit_text"
-         ></EditText>
-        
-        <TextView
-            android:layout_marginLeft="60dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Modelo Del Equipo:"
-            android:textSize="20sp"
-            android:textColor="@color/white"
-            android:layout_gravity="start"
-            android:textStyle="bold"
-            ></TextView>
-        
-        <EditText
             android:layout_marginTop="8dp"
-            android:textStyle="bold"
-            android:textSize="20sp"
+            android:background="@drawable/background_edit_text"
+            android:enabled="false"
+            android:fontFamily="@font/jetbrains_mono_semibold"
+            android:hint="Numero"
+            android:textAlignment="center"
             android:textColor="@color/black"
             android:textColorHint="@color/black"
-            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textStyle="bold"></EditText>
+
+        <TextView
+            android:fontFamily="@font/jetbrains_mono_semibold"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:text="Modelo Del Equipo:"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"></TextView>
+
+        <EditText
             android:id="@+id/modeloET"
             android:layout_width="300dp"
             android:layout_height="50dp"
-            android:hint="Modelo"
-            android:enabled="false"
-            android:background="@drawable/background_edit_text"
-            ></EditText>
-        
-        <TextView
-            android:layout_marginLeft="60dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Area Del Equipo:"
-            android:textSize="20sp"
-            android:textColor="@color/white"
-            android:layout_gravity="start"
-            android:textStyle="bold"
-            ></TextView>
-
-        <EditText
             android:layout_marginTop="8dp"
-            android:textStyle="bold"
-            android:textSize="20sp"
+            android:background="@drawable/background_edit_text"
+            android:enabled="false"
+            android:fontFamily="@font/jetbrains_mono_semibold"
+            android:hint="Modelo"
+            android:textAlignment="center"
             android:textColor="@color/black"
             android:textColorHint="@color/black"
-            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textStyle="bold"></EditText>
+
+        <TextView
+            android:fontFamily="@font/jetbrains_mono_semibold"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:text="Area Del Equipo:"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"></TextView>
+
+        <EditText
             android:id="@+id/areaET"
             android:layout_width="300dp"
             android:layout_height="50dp"
-            android:hint="Area"
-            android:enabled="false"
+            android:layout_marginTop="8dp"
             android:background="@drawable/background_edit_text"
-            ></EditText>
+            android:enabled="false"
+            android:fontFamily="@font/jetbrains_mono_semibold"
+            android:hint="Area"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textColorHint="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"></EditText>
 
         <EditText
-            android:padding="5sp"
-            android:layout_marginTop="8dp"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:textAlignment="center"
             android:id="@+id/estFalloET"
             android:layout_width="300dp"
-            android:hint="Estado Del Fallo"
-            android:enabled="true"
-            android:background="@drawable/background_edit_text"
             android:layout_height="50dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/background_edit_text"
+            android:enabled="true"
+            android:fontFamily="@font/jetbrains_mono_semibold"
+            android:hint="Estado Del Fallo"
             android:inputType="number"
-            ></EditText>
+            android:padding="5sp"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"></EditText>
 
         <EditText
-            android:inputType="text"
-            android:padding="5sp"
-            android:layout_marginTop="8dp"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:textColor="@color/black"
-            android:textAlignment="center"
             android:id="@+id/observacionesET"
             android:layout_width="300dp"
             android:layout_height="100dp"
-            android:hint="Observaciones"
-            android:enabled="true"
+            android:layout_marginTop="8dp"
             android:background="@drawable/background_edit_text"
-            ></EditText>
+            android:enabled="true"
+            android:fontFamily="@font/jetbrains_mono_semibold"
+            android:hint="Observaciones"
+            android:inputType="text"
+            android:padding="5sp"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"></EditText>
 
         <LinearLayout
-            android:layout_marginTop="15dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
             android:gravity="center"
             android:orientation="horizontal">
+
             <ImageButton
-                android:src="@drawable/mob"
-                android:scaleType="centerInside"
-                android:layout_margin="5sp"
-                android:background="@color/cardview_shadow_end_color"
-                android:layout_marginTop="8dp"
+                android:id="@+id/btnLimpiar"
                 android:layout_width="35dp"
                 android:layout_height="55dp"
-                android:id="@+id/btnLimpiar"
+                android:layout_margin="5sp"
+                android:layout_marginTop="8dp"
+                android:background="@color/cardview_shadow_end_color"
+                android:scaleType="centerInside"
+                android:src="@drawable/mob"
                 android:textSize="200dp"
-                android:fontFamily="@font/anton"
-                app:tint="@color/white"></ImageButton>
+                app:tint="@color/white"
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"></ImageButton>
+
             <Button
-                android:layout_margin="5sp"
-                android:textColor="@color/white"
-                android:background="@drawable/background_btn"
-                android:layout_marginTop="8dp"
-                android:layout_width="120dp"
-                android:layout_height="55dp"
-                android:text="Cancelar"
+                android:textAllCaps="false"
                 android:id="@+id/cancelarBTN"
-                android:textSize="20dp"
-                android:fontFamily="@font/anton"
-                ></Button>
-            <Button
-                android:layout_margin="5sp"
-                android:textColor="@color/white"
-                android:background="@drawable/background_btn"
-                android:layout_marginTop="8dp"
                 android:layout_width="120dp"
                 android:layout_height="55dp"
-                android:text="Registrar"
+                android:layout_margin="5sp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/background_btn"
+                android:fontFamily="@font/jetbrains_mono_semibold"
+                android:text="Cancelar"
+                android:textColor="@color/white"
+                android:textSize="20dp"></Button>
+
+            <Button
+                android:textStyle="bold"
+                android:textAllCaps="false"
                 android:id="@+id/registrarBTN"
-                android:textSize="20dp"
-                android:fontFamily="@font/anton"
-                ></Button>
+                android:layout_width="120dp"
+                android:layout_height="55dp"
+                android:layout_margin="5sp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/background_btn"
+                android:fontFamily="@font/jetbrains_mono_semibold"
+                android:text="Registrar"
+                android:textColor="@color/white"
+                android:textSize="20dp"></Button>
         </LinearLayout>
 
     </LinearLayout>

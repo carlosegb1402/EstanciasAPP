@@ -7,167 +7,195 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.example.estanciasapp.DB.DbHandler
 import com.example.estanciasapp.DB.Fallas
 
 class Formulario : AppCompatActivity() {
-    //edit text
-    private lateinit var nombreET:EditText
+
+    // Componentes UI
+    private lateinit var nombreET: EditText
     private lateinit var numeroET: EditText
     private lateinit var modeloET: EditText
     private lateinit var areaET: EditText
     private lateinit var estadoET: EditText
     private lateinit var observacionesET: EditText
-    //buttons
     private lateinit var limpiarBTN: ImageButton
     private lateinit var cancelarBTN: Button
     private lateinit var registrarBTN: Button
-    //datos
-    private lateinit var id:String
-    private lateinit var nombre:String
-    private lateinit var numero:String
-    private lateinit var area:String
-    private lateinit var modelo:String
-    private lateinit var laboratorio:String
 
+    // Datos
+    private lateinit var id: String
+    private lateinit var nombre: String
+    private lateinit var numero: String
+    private lateinit var area: String
+    private lateinit var modelo: String
+    private lateinit var laboratorio: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_formulario)
 
-        //llamado de las funciones
-        iniciarComponentes()
-        eventsBTN()
+        // Inicializar componentes
+        initComponents()
 
-        //obtener infromacion del intent y split
+        // Obtener información del intent
         val values = intent.getStringExtra("informacion")?.split(",") ?: listOf()
 
-
-
-        //condicion para comprobar los datos recibidos
-        if (values.size==6) {
+        if (values.size == 6) {
             id = values[0]
-            nombre=   values[1]
-            numero=    values[2]
-            area=   values[3]
-            modelo=  values[4]
-            laboratorio=values[5]
+            nombre = values[1]
+            numero = values[2]
+            area = values[3]
+            modelo = values[4]
+            laboratorio = values[5]
 
-            nombreET.setText(nombre);numeroET.setText(numero);areaET.setText(area);modeloET.setText(modelo)
+            nombreET.setText(nombre)
+            numeroET.setText(numero)
+            areaET.setText(area)
+            modeloET.setText(modelo)
 
-        }else{
+        } else {
             actQR()
         }
 
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
+        // Función para manejar botones
+        setButtonListeners()
     }
 
-    //fn para iniciar componentes
-    private fun iniciarComponentes(){
-        numeroET=findViewById(R.id.numeroET)
-        nombreET=findViewById(R.id.nombreET)
-        modeloET=findViewById(R.id.modeloET)
-        areaET=findViewById(R.id.areaET)
-        estadoET=findViewById(R.id.estFalloET)
-        observacionesET=findViewById(R.id.observacionesET)
-        limpiarBTN=findViewById(R.id.btnLimpiar)
-        cancelarBTN=findViewById(R.id.cancelarBTN)
-        registrarBTN=findViewById(R.id.registrarBTN)
+    private fun initComponents() {
+        nombreET = findViewById(R.id.nombreET)
+        numeroET = findViewById(R.id.numeroET)
+        modeloET = findViewById(R.id.modeloET)
+        areaET = findViewById(R.id.areaET)
+        estadoET = findViewById(R.id.estFalloET)
+        observacionesET = findViewById(R.id.observacionesET)
+        limpiarBTN = findViewById(R.id.btnLimpiar)
+        cancelarBTN = findViewById(R.id.cancelarBTN)
+        registrarBTN = findViewById(R.id.registrarBTN)
     }
 
-    //fn eventos botones
-    private fun eventsBTN(){
-        limpiarBTN.setOnClickListener{
-            if(observacionesET.text.toString().isEmpty()||estadoET.text.toString().isEmpty()){
-                showMSG("No hay informacion para borrar")
-            }
-            else{
-                limpiar()
-            }
+    private fun setButtonListeners() {
+        limpiarBTN.setOnClickListener {
+            if (observacionesET.text.isNotEmpty() || estadoET.text.isNotEmpty()) limpiar()
+            else showToast("No hay información para borrar")
         }
 
-        //boton registrar
-        cancelarBTN.setOnClickListener{
-            alertExit()
+        cancelarBTN.setOnClickListener {
+            showExitDialog()
         }
 
-        //boton registrar
-        registrarBTN.setOnClickListener{
+        registrarBTN.setOnClickListener {
             AlertDialog.Builder(this)
                 .setMessage("¿Seguro que desea realizar el registro?")
-                .setCancelable(false).setTitle("Confirmacion")
-                .setPositiveButton("Sí") { _, _ ->
-
-                    if(observacionesET.text.toString().isEmpty()||estadoET.text.toString().isEmpty()){
-                    showMSG("Campos Vacios")
-                }
-                else{
-                    if (estadoET.text.toString().toInt()>4){
-                        showMSG("Ingrese un Estado del 1 al 4 Solamente")
-                    }
-                    else {
-                        val fallas = Fallas(
-                            id.toInt(),
-                            estadoET.text.toString().toInt(),
-                            observacionesET.text.toString(),
-                            laboratorio.toInt()
-                        )
-                        val db = DbHandler(this)
-                        db.insertDATA(fallas)
-                        limpiar()
-                    }
-                }}
+                .setCancelable(false)
+                .setTitle("Confirmación")
+                .setPositiveButton("Sí") { _, _ -> fnRegistrar() }
                 .setNegativeButton("No", null)
                 .show()
         }
     }
 
-    //fn mostrar toast
-    private fun showMSG(msg:String){
-        Toast.makeText(this,msg, Toast.LENGTH_SHORT).show()
+    private fun fnRegistrar() {
+        val estado = estadoET.text.toString().toIntOrNull()
+        val observaciones = observacionesET.text.toString()
+
+        if (estado == null || observaciones.isEmpty()) {
+            showToast("Campos Vacíos o inválidos")
+            return
+        }
+
+        val fallas = Fallas(eqpfal = id.toInt(), estfal = estado, obsfal = observaciones, labfal = laboratorio.toInt())
+        val db = DbHandler(this)
+
+        if (estado > 4) {
+            showToast("Estado debe estar entre 1 y 4")
+            return
+        }
+
+        // Verificar conexión a Internet
+        if (FnClass().haveNetwork(this)) {
+            sendToServer(fallas)
+            limpiar()
+        } else {
+            db.insertDATA(fallas)
+            limpiar()
+        }
     }
 
-    //fn limpiar edit text
-    private fun limpiar(){
-        observacionesET.setText("");estadoET.setText("")
+
+    private fun sendToServer(falla: Fallas) {
+        val url = "http://192.168.1.77/wServices/registrarFalla.php"
+        val stringRequest = object : StringRequest(
+            Method.POST, url,
+            Response.Listener { response ->
+                if (response.contains("Falla registrada exitosamente")) showToast("Registro Subido Correctamente")
+                else {
+                    val db = DbHandler(this)
+                    db.insertDATA(falla)
+                    limpiar()
+                }
+            },
+            Response.ErrorListener { error ->
+                showToast("Error de conexión con el servidor: ${error.message}")
+            }
+        ) {
+            override fun getParams(): MutableMap<String, String> {
+                return hashMapOf(
+                    "eqpfal" to falla.eqpfal.toString(),
+                    "estfal" to falla.estfal.toString(),
+                    "obsfal" to falla.obsfal,
+                    "labfal" to falla.labfal.toString()
+                )
+            }
+        }
+        Volley.newRequestQueue(this).add(stringRequest)
     }
 
-    //fn mostrar alert
-    private  fun alertExit(){
+    private fun syncDataWithServer() {
+        val db = DbHandler(this)
+        val fallasList = db.getPendingFallas()
+
+        fallasList.forEach { falla ->
+            if (FnClass().haveNetwork(this)) {
+                showToast("Registros Sincronizados")
+                sendToServer(falla)
+                db.dropTable()
+            }
+        }
+    }
+
+    private fun limpiar() {
+        observacionesET.setText("")
+        estadoET.setText("")
+    }
+
+    private fun showToast(msg: String) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showExitDialog() {
         AlertDialog.Builder(this)
             .setMessage("¿Estás seguro de que quieres salir?")
-            .setCancelable(false).setTitle("Aplicacion")
-            .setPositiveButton("Sí") { _, _ -> actQR()}
+            .setCancelable(false)
+            .setTitle("Aplicación")
+            .setPositiveButton("Sí") { _, _ -> actQR() }
             .setNegativeButton("No", null)
             .show()
     }
 
-    //fn intent actividad qr
-    private fun actQR(){
-        val intQR=Intent(this,QR::class.java)
-        startActivity(intQR)
+    private fun actQR() {
+        startActivity(Intent(this, QR::class.java))
         finish()
     }
 
-    ///fn boton atras de android
-    @Deprecated("This method has been deprecated in favor of using the\n      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.\n      The OnBackPressedDispatcher controls how back button events are dispatched\n      to one or more {@link OnBackPressedCallback} objects.")
     @SuppressLint("MissingSuperCall")
     override fun onBackPressed() {
-        alertExit()
+        showExitDialog()
     }
-
-
-
 }

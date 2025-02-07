@@ -6,17 +6,17 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.widget.Toast
 
-val DATABASE_NAME="MyDb"
-val TABLE_NAME="eqp_fallas"
-val COL_IDFAL="idfal"
-val COL_EQPFAL="eqpfal"
-val COL_FECFAL="fecfal"
-val COL_ESTFAL="estfal"
-val COL_OBSFAL="obsfal"
-val COL_LABFAL="labfal"
+const val DATABASE_NAME="MyDb"
+const val TABLE_NAME="eqp_fallas"
+const val COL_IDFAL="idfal"
+const val COL_EQPFAL="eqpfal"
+const val COL_FECFAL="fecfal"
+const val COL_ESTFAL="estfal"
+const val COL_OBSFAL="obsfal"
+const val COL_LABFAL="labfal"
 
 
-class DbHandler (var context:Context):SQLiteOpenHelper(context, DATABASE_NAME,null,1){
+class DbHandler (private var context:Context):SQLiteOpenHelper(context, DATABASE_NAME,null,1){
     override fun onCreate(db: SQLiteDatabase?) {
 
         val createTable="""
@@ -41,22 +41,52 @@ class DbHandler (var context:Context):SQLiteOpenHelper(context, DATABASE_NAME,nu
     fun insertDATA(fallas: Fallas){
 
         val db=this.writableDatabase
-        var cv=ContentValues()
+        val cv=ContentValues()
 
         cv.put(COL_EQPFAL,fallas.eqpfal)
         cv.put(COL_ESTFAL,fallas.estfal)
         cv.put(COL_OBSFAL,fallas.obsfal)
         cv.put(COL_LABFAL,fallas.labfal)
 
-        var result=db.insert(TABLE_NAME,null,cv)
+        val result=db.insert(TABLE_NAME,null,cv)
 
-        if(result==-1.toLong()){
-            Toast.makeText(context,"Error",Toast.LENGTH_SHORT).show()
+        if(result== (-1).toLong()){
+            Toast.makeText(context,"Error al Almacenar Localmente",Toast.LENGTH_SHORT).show()
         }else{
-            Toast.makeText(context,"Succes",Toast.LENGTH_SHORT).show()
+            Toast.makeText(context,"Almacenado Locamente",Toast.LENGTH_SHORT).show()
         }
 
     }
+
+    fun getPendingFallas(): List<Fallas> {
+        val fallasList = mutableListOf<Fallas>()
+        val db = this.readableDatabase
+        val cursor = db.rawQuery("SELECT * FROM $TABLE_NAME ORDER BY $COL_IDFAL ASC", null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val fallas = Fallas(
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COL_EQPFAL)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COL_ESTFAL)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COL_OBSFAL)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COL_LABFAL))
+                )
+                fallasList.add(fallas)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        return fallasList
+    }
+
+    fun dropTable() {
+        val db = this.writableDatabase
+        val dropTableQuery = "DROP TABLE IF EXISTS $TABLE_NAME"
+        db.execSQL(dropTableQuery)
+        Toast.makeText(context, "Tabla eliminada correctamente", Toast.LENGTH_SHORT).show()
+    }
+
+
+
 }
 
 

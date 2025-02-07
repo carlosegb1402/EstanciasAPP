@@ -19,7 +19,7 @@
             android:id="@+id/msgTV"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/anton"
+            android:fontFamily="@font/jetbrains_mono_semibold"
             android:text=""
             android:textColor="@color/white"
             android:textSize="20dp"
