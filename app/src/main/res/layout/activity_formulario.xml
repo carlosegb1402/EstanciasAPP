@@ -109,21 +109,18 @@
             android:textSize="20sp"
             android:textStyle="bold"></EditText>
 
-        <EditText
-            android:id="@+id/estFalloET"
+        <Spinner
+            android:theme="@style/SpinnerTheme"
+            android:entries="@array/estados_array"
+            android:id="@+id/estFalloSP"
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/background_edit_text"
             android:enabled="true"
-            android:fontFamily="@font/jetbrains_mono_semibold"
-            android:hint="Estado Del Fallo"
-            android:inputType="number"
             android:padding="5sp"
             android:textAlignment="center"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:textStyle="bold"></EditText>
+            android:textColor="@color/black"></Spinner>
 
         <EditText
             android:id="@+id/observacionesET"

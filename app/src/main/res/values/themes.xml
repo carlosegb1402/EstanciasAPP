@@ -5,5 +5,11 @@
         <item name="colorPrimary">@color/principal</item>
     </style>
 
+    <style name="SpinnerTheme">
+        <item name="android:textSize">20sp</item>
+        <item name="android:fontFamily">@font/jetbrains_mono_semibold</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="Theme.EstanciasAPP" parent="Base.Theme.EstanciasAPP" />
 </resources>

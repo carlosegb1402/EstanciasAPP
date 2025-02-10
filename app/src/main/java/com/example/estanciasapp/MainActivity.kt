@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.estanciasapp.DB.DbHandler
 import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
@@ -33,7 +34,10 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        var classs=FnClass()
+        val dbHandler = DbHandler(this)
+        val db = dbHandler.openDatabase()
+
+        dbHandler.checkAndCreateTable(db)
 
         loginPreferences=getSharedPreferences("loginPref", MODE_PRIVATE)
         loginPrefEditor=loginPreferences.edit()
