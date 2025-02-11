@@ -1,24 +1,16 @@
 package com.example.estanciasapp
 
-import FnClass
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
 import com.example.estanciasapp.DB.DbHandler
 import com.example.estanciasapp.DB.Fallas
-import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -48,8 +40,11 @@ class Formulario : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_formulario)
 
-        // Inicializar componentes
-      //  if (FnClass().isConnectedToInternet(this))FnClass().syncPendingFallas(this)
+
+      if (FnClass().isConnectedToInternet(this)){
+          FnClass().syncPendingFallas(this)
+      }
+
         initComponents()
         obtenerInformacionEquipo()
         setButtonListeners()
@@ -121,7 +116,7 @@ class Formulario : AppCompatActivity() {
     }
 
     //FN OBTENER FECHA
-    fun obtenerFechaActual(): String {
+    private fun obtenerFechaActual(): String {
         val formatoFecha = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val fechaActual = Calendar.getInstance().time
         return formatoFecha.format(fechaActual)
@@ -129,11 +124,11 @@ class Formulario : AppCompatActivity() {
 
     //FN REGISTRAR
     private fun fnRegistrar() {
+        val db = DbHandler(this)
 
         if (observacionesET.text.isEmpty()) {
             FnClass().showToast(this,"Hay Campos Vacíos")
         }else {
-
             val fallas = Fallas(
                 eqpfal = idEquipo.toInt(),
                 fecfal = obtenerFechaActual(),
@@ -141,14 +136,13 @@ class Formulario : AppCompatActivity() {
                 obsfal = observacionesET.text.toString(),
             )
 
-            val db = DbHandler(this)
-
             if (FnClass().isConnectedToInternet(this)) {
-                    FnClass().syncPendingFallas(this)
+                FnClass().syncPendingFallas(this)
+                FnClass().sendToServer(this,fallas)
+                limpiar()
+            }
 
-                    FnClass().sendToServer(this,fallas)
-                    limpiar()
-            } else {
+            else {
                 db.insertDATA(fallas)
                 limpiar()
             }
@@ -172,6 +166,7 @@ class Formulario : AppCompatActivity() {
         finish()
     }
 
+    @Deprecated("This method has been deprecated in favor of using the\n      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.\n      The OnBackPressedDispatcher controls how back button events are dispatched\n      to one or more {@link OnBackPressedCallback} objects.")
     @SuppressLint("MissingSuperCall")
     override fun onBackPressed() {
         showExitDialog()

@@ -75,7 +75,7 @@ class DbHandler(private var context: Context) : SQLiteOpenHelper(context, DATABA
     fun getPendingFallas(): List<Fallas> {
         val fallasList = mutableListOf<Fallas>()
         val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT * FROM $TABLE_NAME ORDER BY $COL_IDFAL DESC", null)
+        val cursor = db.rawQuery("SELECT * FROM $TABLE_NAME ORDER BY $COL_IDFAL ASC", null)
 
         if (cursor.moveToFirst()) {
             do {
