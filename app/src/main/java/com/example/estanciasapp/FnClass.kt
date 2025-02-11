@@ -29,7 +29,7 @@ class FnClass {
      fun sendToServer(context: Context,falla: Fallas) {
 
         val db = DbHandler(context)
-        val url = "http://192.168.1.152/wServices/registrarFalla.php"
+        val url = "http://172.16.13.213/wServices/registrarFalla.php"
 
         val stringRequest = object : StringRequest(
             Method.POST, url,
@@ -47,8 +47,7 @@ class FnClass {
                     "eqpfal" to falla.eqpfal.toString(),
                     "fecfal" to falla.fecfal,
                     "estfal" to falla.estfal.toString(),
-                    "obsfal" to falla.obsfal,
-                    "labfal" to falla.labfal.toString()
+                    "obsfal" to falla.obsfal
                 )
             }
         }
@@ -59,7 +58,7 @@ class FnClass {
     fun syncPendingFallas(context: Context) {
         val db = DbHandler(context)
         val fallasList = db.getPendingFallas()
-        val url = "http://192.168.1.152/wServices/registrarFalla.php"
+        val url = "http://172.16.13.213/wServices/registrarFalla.php"
 
         if(fallasList.isNotEmpty()){
         fallasList.forEach {
@@ -77,8 +76,7 @@ class FnClass {
                         "eqpfal" to falla.eqpfal.toString(),
                         "fecfal" to falla.fecfal,
                         "estfal" to falla.estfal.toString(),
-                        "obsfal" to falla.obsfal,
-                        "labfal" to falla.labfal.toString()
+                        "obsfal" to falla.obsfal
                     )
                 }
             }
@@ -87,6 +85,7 @@ class FnClass {
         }else{
             return
         }
+
     }
 
     //FN MOSTRAR MSG

@@ -108,8 +108,15 @@
             android:textColorHint="@color/black"
             android:textSize="20sp"
             android:textStyle="bold"></EditText>
-
+        <TextView
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/jetbrains_mono_semibold"
+            android:text="Estado:"
+            android:textColor="@color/white"
+            android:textSize="20sp"></TextView>
         <Spinner
+
             android:theme="@style/SpinnerTheme"
             android:entries="@array/estados_array"
             android:id="@+id/estFalloSP"

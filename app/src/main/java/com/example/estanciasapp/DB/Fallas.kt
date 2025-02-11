@@ -6,14 +6,12 @@ class Fallas {
     var fecfal:String=""
     var estfal:Int=0
     var obsfal:String=""
-    var labfal:Int=1
 
-    constructor(eqpfal: Int,fecfal:String,estfal: Int, obsfal: String, labfal: Int) {
+    constructor(eqpfal: Int,fecfal:String,estfal: Int, obsfal: String) {
         this.eqpfal = eqpfal
         this.fecfal = fecfal
         this.estfal = estfal
         this.obsfal = obsfal
-        this.labfal = labfal
     }
 
 }

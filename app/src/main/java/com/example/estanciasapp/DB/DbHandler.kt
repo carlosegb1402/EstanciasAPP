@@ -62,8 +62,7 @@ class DbHandler(private var context: Context) : SQLiteOpenHelper(context, DATABA
         cv.put(COL_FECFAL, fallas.fecfal)
         cv.put(COL_ESTFAL, fallas.estfal)
         cv.put(COL_OBSFAL, fallas.obsfal)
-        cv.put(COL_LABFAL, fallas.labfal)
-
+        cv.put(COL_LABFAL,1)
         val result = db.insert(TABLE_NAME, null, cv)
 
         if (result == (-1).toLong()) {
@@ -84,8 +83,7 @@ class DbHandler(private var context: Context) : SQLiteOpenHelper(context, DATABA
                     cursor.getInt(cursor.getColumnIndexOrThrow(COL_EQPFAL)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COL_FECFAL)),
                     cursor.getInt(cursor.getColumnIndexOrThrow(COL_ESTFAL)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(COL_OBSFAL)),
-                    cursor.getInt(cursor.getColumnIndexOrThrow(COL_LABFAL))
+                    cursor.getString(cursor.getColumnIndexOrThrow(COL_OBSFAL))
                 )
                 fallasList.add(fallas)
             } while (cursor.moveToNext())

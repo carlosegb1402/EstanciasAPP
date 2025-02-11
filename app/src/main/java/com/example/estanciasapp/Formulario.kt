@@ -4,6 +4,7 @@ import FnClass
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -17,6 +18,7 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.estanciasapp.DB.DbHandler
 import com.example.estanciasapp.DB.Fallas
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -40,7 +42,7 @@ class Formulario : AppCompatActivity() {
     private lateinit var numeroEquipo: String
     private lateinit var areaEquipo: String
     private lateinit var modeloEquipo: String
-    private lateinit var laboratorioEquipo: String
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +66,6 @@ class Formulario : AppCompatActivity() {
             numeroEquipo = values[2]
             areaEquipo = values[3]
             modeloEquipo = values[4]
-            laboratorioEquipo = values[5]
 
             nombreET.setText(nombreEquipo)
             numeroET.setText(numeroEquipo)
@@ -138,13 +139,13 @@ class Formulario : AppCompatActivity() {
                 fecfal = obtenerFechaActual(),
                 estfal = estadoSP.getSelectedItem().toString().toInt(),
                 obsfal = observacionesET.text.toString(),
-                labfal = laboratorioEquipo.toInt()
             )
 
             val db = DbHandler(this)
 
             if (FnClass().isConnectedToInternet(this)) {
                     FnClass().syncPendingFallas(this)
+
                     FnClass().sendToServer(this,fallas)
                     limpiar()
             } else {
