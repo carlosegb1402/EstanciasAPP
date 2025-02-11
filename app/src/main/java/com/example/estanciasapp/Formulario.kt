@@ -41,9 +41,10 @@ class Formulario : AppCompatActivity() {
         setContentView(R.layout.activity_formulario)
 
 
-      if (FnClass().isConnectedToInternet(this)){
-          FnClass().syncPendingFallas(this)
-      }
+        if (FnClass().isConnectedToInternet(this)) {
+            FnClass().syncPendingFallas(this) {}
+        }
+
 
         initComponents()
         obtenerInformacionEquipo()
@@ -125,6 +126,8 @@ class Formulario : AppCompatActivity() {
     //FN REGISTRAR
     private fun fnRegistrar() {
         val db = DbHandler(this)
+        val listaPending=db.getPendingFallas()
+
 
         if (observacionesET.text.isEmpty()) {
             FnClass().showToast(this,"Hay Campos Vacíos")
@@ -136,12 +139,15 @@ class Formulario : AppCompatActivity() {
                 obsfal = observacionesET.text.toString(),
             )
 
-            if (FnClass().isConnectedToInternet(this)) {
-                FnClass().syncPendingFallas(this)
-                FnClass().sendToServer(this,fallas)
+            if (FnClass().isConnectedToInternet(this) && listaPending.isNotEmpty()) {
+                FnClass().syncPendingFallas(this) {
+                    FnClass().sendToServer(this, fallas)
+                    limpiar()
+                }
+            }else if(FnClass().isConnectedToInternet(this)){
+                FnClass().sendToServer(this, fallas)
                 limpiar()
             }
-
             else {
                 db.insertDATA(fallas)
                 limpiar()
