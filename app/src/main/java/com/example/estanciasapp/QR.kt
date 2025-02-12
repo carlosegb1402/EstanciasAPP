@@ -1,23 +1,14 @@
 package com.example.estanciasapp
 
-import android.app.Activity
+import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Size
-import android.view.View
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.registerForActivityResult
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.CameraProvider
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
@@ -27,19 +18,13 @@ import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.estanciasapp.databinding.ActivityMainBinding
 import com.example.estanciasapp.databinding.ActivityQrBinding
-import com.google.android.material.snackbar.BaseTransientBottomBar
-import com.google.android.material.snackbar.Snackbar
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import java.util.jar.Manifest
 
 class QR : AppCompatActivity() {
 
@@ -74,11 +59,12 @@ class QR : AppCompatActivity() {
         val resolutionSelector=ResolutionSelector.Builder().setResolutionStrategy(ResolutionStrategy(screenSize,ResolutionStrategy.FALLBACK_RULE_NONE)).build()
         cameraProviderFuture.addListener({
             val cameraProvider=cameraProviderFuture.get()
-            val preview=Preview.Builder().setResolutionSelector(resolutionSelector).build().also { it.setSurfaceProvider(binding.previewView.surfaceProvider) }
-            val imageAnalyzer=ImageAnalysis.Builder().setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build().also { it.setAnalyzer(cameraExecutor,{
-                imageProxy->
+            val preview=Preview.Builder().setResolutionSelector(resolutionSelector).build().also { it.surfaceProvider =
+                binding.previewView.surfaceProvider }
+            val imageAnalyzer=ImageAnalysis.Builder().setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build().also { it.setAnalyzer(cameraExecutor) { imageProxy ->
                 processImageProxy(imageProxy)
-            }) }
+            }
+            }
             val cameraSelector= CameraSelector.DEFAULT_BACK_CAMERA
             cameraProvider.bindToLifecycle(this,cameraSelector,preview,imageAnalyzer)
         },ContextCompat.getMainExecutor(this))
@@ -91,7 +77,7 @@ class QR : AppCompatActivity() {
             val image = InputImage.fromMediaImage(mediaImage,imageProxy.imageInfo.rotationDegrees)
             barcodeScanner.process(image).addOnSuccessListener { barcodes->
                 if (barcodes.isEmpty()) {
-                    msgTV.setText("")
+                    msgTV.text = ""
                 } else {
                     for (barcode in barcodes) {
                         handleBarcode(barcode)
@@ -101,6 +87,7 @@ class QR : AppCompatActivity() {
         }
     }
 //,
+    @SuppressLint("SetTextI18n")
     private fun handleBarcode(barcode: Barcode) {
 
         val txt = barcode.url?.url ?: barcode.displayValue
@@ -142,7 +129,7 @@ class QR : AppCompatActivity() {
             finish()
         }
         else{
-             msgTV.setText("El Codigo QR No Es Valido")
+            msgTV.text = "El Codigo QR No Es Valido"
         }
 
 

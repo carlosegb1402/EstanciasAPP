@@ -1,8 +1,12 @@
 package com.example.estanciasapp
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -11,6 +15,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.estanciasapp.DB.DbHandler
 import com.example.estanciasapp.DB.Fallas
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.InetSocketAddress
+import java.net.Socket
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -40,16 +50,35 @@ class Formulario : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_formulario)
 
-
-        if (FnClass().isConnectedToInternet(this)) {
-            FnClass().syncPendingFallas(this) {}
-        }
-
-
         initComponents()
         obtenerInformacionEquipo()
         setButtonListeners()
     }
+
+    suspend fun isInternetAvailable(context: Context): Boolean {
+        if (!isNetworkConnected(context)) return false // Primero verifica si hay conexión de red
+
+        return withContext(Dispatchers.IO) {
+            try {
+                // Intenta conectarse a Google DNS (8.8.8.8) en el puerto 53
+                Socket().use { socket ->
+                    socket.connect(InetSocketAddress("8.8.8.8", 53), 500)
+                    true
+                }
+            } catch (e: Exception) {
+                false
+            }
+        }
+    }
+
+    // Verificar si hay red activa (Wi-Fi o Datos Móviles)
+    fun isNetworkConnected(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
+
 
     // Obtener información del intent
     private fun obtenerInformacionEquipo(){
@@ -128,7 +157,6 @@ class Formulario : AppCompatActivity() {
         val db = DbHandler(this)
         val listaPending=db.getPendingFallas()
 
-
         if (observacionesET.text.isEmpty()) {
             FnClass().showToast(this,"Hay Campos Vacíos")
         }else {
@@ -139,19 +167,24 @@ class Formulario : AppCompatActivity() {
                 obsfal = observacionesET.text.toString(),
             )
 
-            if (FnClass().isConnectedToInternet(this) && listaPending.isNotEmpty()) {
-                FnClass().syncPendingFallas(this) {
-                    FnClass().sendToServer(this, fallas)
+            CoroutineScope(Dispatchers.Main).launch {
+                if (isInternetAvailable(this@Formulario) && listaPending.isNotEmpty()) {
+                    FnClass().syncPendingFallas(this@Formulario) {
+                        FnClass().sendToServer(this@Formulario, fallas)
+                        limpiar()
+                        actQR()
+                    }
+                }else if(isInternetAvailable(this@Formulario)){
+                    FnClass().sendToServer(this@Formulario, fallas)
                     limpiar()
+                    actQR()
+                }else{
+                    limpiar()
+                    db.insertDATA(fallas)
+                    actQR()
                 }
-            }else if(FnClass().isConnectedToInternet(this)){
-                FnClass().sendToServer(this, fallas)
-                limpiar()
             }
-            else {
-                db.insertDATA(fallas)
-                limpiar()
-            }
+
         }
     }
 

@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
+
         val dbHandler = DbHandler(this)
         val db = dbHandler.openDatabase()
 
