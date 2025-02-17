@@ -1,6 +1,7 @@
 package com.example.estanciasapp
 
 import android.content.Context
+import android.util.Log
 
 import android.widget.Toast
 import com.android.volley.DefaultRetryPolicy
@@ -9,6 +10,11 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.estanciasapp.DB.DbHandler
 import com.example.estanciasapp.DB.Fallas
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.io.IOException
 
 class FnClass {
 
@@ -113,6 +119,27 @@ class FnClass {
     //FN MOSTRAR MSG
      fun showToast(context: Context,msg: String) {
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+    }
+
+    //FN CHECK CONNECTION
+    fun checkConnection(callback: (Boolean) -> Unit) {
+        val url = "https://www.google.com"
+
+        val client = OkHttpClient()
+        val request = Request.Builder().url(url).build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.w("CheckConnection", "SIN CONEXIÓN")
+                callback(false)
+            }
+
+            override fun onResponse(call: Call, response: okhttp3.Response) {
+                val isConnected = response.isSuccessful
+                Log.w("CheckConnection", "CONEXIÓN EXITOSA")
+                callback(isConnected)
+            }
+        })
     }
 
 }

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
@@ -15,8 +16,13 @@ import androidx.appcompat.app.AppCompatActivity
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.IOException
 import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
@@ -77,7 +83,18 @@ class MainActivity : AppCompatActivity() {
     //FN Botones
     private fun eventsBTN(){
         ///BTN ENTRAR
-        btnEntrar.setOnClickListener{ fnAcceder() }
+        btnEntrar.setOnClickListener{
+            FnClass().checkConnection { isConnected ->
+                runOnUiThread {
+                    if (isConnected) {
+                        fnAcceder()
+                    } else {
+                        FnClass().showToast(this, "No hay conexión a internet.")
+                    }
+                }
+            }
+
+        }
         //BTN SALIR
         btnSalir.setOnClickListener{ exitDialog() }
     }

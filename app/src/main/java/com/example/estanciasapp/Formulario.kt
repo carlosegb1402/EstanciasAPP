@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -18,6 +19,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import java.io.IOException
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.text.SimpleDateFormat
@@ -55,27 +62,26 @@ class Formulario : AppCompatActivity() {
 
     }
 
-     suspend fun isInternetAvailable(context: Context): Boolean {
-        if (!isNetworkConnected(context)) return false
+    fun checkConnection(callback: (Boolean) -> Unit) {
+        val url = "https://www.google.com"
 
-        return withContext(Dispatchers.IO) {
-            try {
-                Socket().use { socket ->
-                    socket.connect(InetSocketAddress("8.8.8.8", 53), 1000)
-                    true
-                }
-            } catch (e: Exception) {
-                false
+        val client = OkHttpClient()
+        val request = Request.Builder().url(url).build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.w("CheckConnection", "SIN CONEXIÓN")
+                callback(false)
             }
-        }
+
+            override fun onResponse(call: Call, response: Response) {
+                val isConnected = response.isSuccessful
+                Log.w("CheckConnection", "CONEXIÓN EXITOSA")
+                callback(isConnected)
+            }
+        })
     }
 
-     fun isNetworkConnected(context: Context): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val network = connectivityManager.activeNetwork ?: return false
-        val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
-        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-    }
 
 
     // Obtener información del intent
@@ -158,23 +164,34 @@ class Formulario : AppCompatActivity() {
     //FN REGISTRAR
     private fun fnRegistrar() {
         val db = DbHandler(this)
-        val listaPending=db.getPendingFallas()
+        val listaPending = db.getPendingFallas()
 
         val fallas = Fallas(
-                eqpfal = idEquipo.toInt(),
-                fecfal = obtenerFechaActual(),
-                estfal = estadoSP.getSelectedItem().toString().toInt(),
-                obsfal = observacionesET.text.toString()
-            )
+            eqpfal = idEquipo.toInt(),
+            fecfal = obtenerFechaActual(),
+            estfal = estadoSP.getSelectedItem().toString().toInt(),
+            obsfal = observacionesET.text.toString()
+        )
 
-            CoroutineScope(Dispatchers.Main).launch {
-                if (isInternetAvailable(this@Formulario) && listaPending.isNotEmpty()) {
+
+        checkConnection { isConnected ->
+            if (isConnected) {
+                FnClass().showToast(this, "Hay conexión a internet.")
+            } else {
+                FnClass().showToast(this, "No hay conexión a internet.")
+            }
+        }
+
+
+        /*if (listaPending.isNotEmpty()) {
                     FnClass().syncPendingFallas(this@Formulario) {
                         FnClass().sendToServer(this@Formulario, fallas)
                         limpiar()
                         actQR()
                     }
-                }else if(isInternetAvailable(this@Formulario)){
+                }
+
+              else if(isInternetAvailable(this@Formulario)){
                     FnClass().sendToServer(this@Formulario, fallas)
                     limpiar()
                     actQR()
@@ -183,11 +200,10 @@ class Formulario : AppCompatActivity() {
                     db.insertDATA(fallas)
                     actQR()
                 }
-            }
 
-        }
+        }*/
 
-
+    }
 
     //FN MOSTRAR DIALOG
     private fun showExitDialog() {
