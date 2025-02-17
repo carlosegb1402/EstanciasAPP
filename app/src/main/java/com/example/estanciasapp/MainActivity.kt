@@ -1,6 +1,5 @@
 package com.example.estanciasapp
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
@@ -9,17 +8,20 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.estanciasapp.DB.DbHandler
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import org.json.JSONException
+import org.json.JSONObject
 import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
 
-    //declaracion de los objetos
+    //Declaracion UI
     private lateinit var etUsuario : EditText
     private lateinit var etContrasena : EditText
     private lateinit var btnEntrar : Button
@@ -30,15 +32,20 @@ class MainActivity : AppCompatActivity() {
     private var saveLogin by Delegates.notNull<Boolean>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                exitDialog()
+            }
+        })
 
-        val dbHandler = DbHandler(this)
-        val db = dbHandler.openDatabase()
-
-        dbHandler.checkAndCreateTable(db)
+//      val dbHandler = DbHandler(this)
+//      val db = dbHandler.openDatabase()
+//      dbHandler.checkAndCreateTable(db)
 
         loginPreferences=getSharedPreferences("loginPref", MODE_PRIVATE)
         loginPrefEditor=loginPreferences.edit()
@@ -56,118 +63,113 @@ class MainActivity : AppCompatActivity() {
             limpiarInputs()
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-
-        }
-
-
     }
 
-    //conexion de los widgets del layout
-    private fun iniciarComponentes(){
-        etUsuario=findViewById(R.id.etUsuario)
-        etContrasena=findViewById(R.id.etcontrasena)
-        btnEntrar=findViewById(R.id.btnEntrar)
-        btnSalir=findViewById(R.id.btnSalir)
-        recordarCB=findViewById(R.id.recordarCB)
+    //UI Componentes
+    private fun iniciarComponentes() {
+        etUsuario = findViewById(R.id.etUsuario)
+        etContrasena = findViewById(R.id.etcontrasena)
+        btnEntrar = findViewById(R.id.btnEntrar)
+        btnSalir = findViewById(R.id.btnSalir)
+        recordarCB = findViewById(R.id.recordarCB)
     }
 
-    //funcion para ingresar
+    //FN Botones
     private fun eventsBTN(){
-
-        //programacion del boton entrar
-        btnEntrar.setOnClickListener{
-             fnAcceder()
-        }
-
-        //programacion del boton salir
-        btnSalir.setOnClickListener{
-            alertExit()
-            }
-
+        ///BTN ENTRAR
+        btnEntrar.setOnClickListener{ fnAcceder() }
+        //BTN SALIR
+        btnSalir.setOnClickListener{ exitDialog() }
     }
 
+    //FN Recordar Usuario
     private fun fnRecordar(){
-        if (recordarCB.isChecked){
-           loginPrefEditor.putBoolean("saveLogin",true)
-           loginPrefEditor.putString("usuario",etUsuario.text.toString())
-           loginPrefEditor.putString("contrasena",etUsuario.text.toString())
-           loginPrefEditor.commit()
-        }
-        else{
-         limpiarInputs()
-         loginPrefEditor.clear()
-         loginPrefEditor.commit()
-        }
-    }
-
-    //funcion para acceso
-    private fun fnAcceder(){
-
-        val usuario ="12345"
-        val contrasena ="12345"
-
-
-        if (etUsuario.text.toString().isEmpty() && etContrasena.text.toString().isEmpty()){
-            showMSG("Ingrese los datos requeridos para acceder")
-        }
-
-
-        else if (etContrasena.text.toString().isEmpty()){
-            showMSG("Ingrese La Contraseña")
-        }
-
-        else if (etUsuario.text.toString().isEmpty()){
-            showMSG("Ingrese El Usuario")
-        }
-
-        else if(etUsuario.text.toString()==usuario && etContrasena.text.toString()==contrasena){
-                fnRecordar()
-                usuario.qrActivity()
-        }
-
-        else{
-            showMSG("Datos Incorrectos")
+        with(loginPrefEditor) {
+            if (recordarCB.isChecked) {
+                putBoolean("saveLogin", true)
+                putString("usuario", etUsuario.text.toString())
+                putString("contrasena", etContrasena.text.toString())
+            } else {
+                remove("usuario")
+                remove("contrasena")
+                putBoolean("saveLogin", false)
+            }
+            apply()
         }
     }
 
-    //fn ir activity qr
-    private fun String.qrActivity() {
-        val menuPrinIntent=Intent(this@MainActivity,QR::class.java)
-        menuPrinIntent.putExtra("usuario", this)
-        startActivity(menuPrinIntent)
+
+    //FN Acceder
+    private fun fnAcceder() {
+        val usuario = etUsuario.text.toString()
+        val contrasena = etContrasena.text.toString()
+
+        if (usuario.isEmpty() || contrasena.isEmpty()) {
+            showMSG("Ingrese Todos Los Datos")
+            return
+        }
+        val url = "http://172.16.13.213/wServices/verificarUsuario.php"
+        val request = object : StringRequest(
+            Method.POST, url,
+            Response.Listener { response ->
+                try {
+                    val jsonResponse = JSONObject(response)
+                    if (jsonResponse.getString("status") == "success") {
+                        fnRecordar()
+                        showMSG(jsonResponse.getString("message"))
+                        actQR()
+                    } else {
+                        showMSG(jsonResponse.getString("message"))
+                    }
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                    showMSG("Error en la respuesta del servidor")
+                }
+            },
+            Response.ErrorListener { error ->
+                error.printStackTrace()
+                showMSG("Error en la conexión con el servidor")
+            }) {
+
+            override fun getParams(): Map<String, String> {
+                val params = HashMap<String, String>()
+                params["usuario"] = usuario
+                params["contrasena"] = contrasena
+                return params
+            }
+        }
+
+        val requestQueue = Volley.newRequestQueue(this)
+        requestQueue.add(request)
+    }
+
+
+    //FN Intent QR
+    private fun actQR() {
+//      menuPrinIntent.putExtra("usuario", this)
+        startActivity(Intent(this@MainActivity,QR::class.java))
         finish()
     }
 
-    //fn limpiar inputs
+    //FN Limpiar Inputs
     private fun limpiarInputs(){
         etUsuario.setText("")
         etContrasena.setText("")
     }
 
-    //fn mostrar msg errores
-    private fun showMSG(msg:String){
-        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show()
-            }
+    //FN Show Toast
+    private fun showMSG(msg:String){Toast.makeText(this,msg,Toast.LENGTH_SHORT).show()}
 
-    //fn mostrar msg salir aplicacion
-    private  fun alertExit(){
+    //FN Show Dialog
+    private fun exitDialog(){
         AlertDialog.Builder(this)
-            .setMessage("¿Estás seguro de que quieres salir?")
-            .setCancelable(false).setTitle("Aplicacion")
-            .setPositiveButton("Sí") { _, _ -> finish()}
+            .setTitle("Aplicación")
+            .setMessage("¿Estás seguro que deseas salir?")
+            .setCancelable(true)
+            .setPositiveButton("Sí") { _, _ -> finishAffinity() }
             .setNegativeButton("No", null)
             .show()
     }
 
-    ///programacion boton atras de android
-    @Deprecated("This method has been deprecated in favor of using the\n      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.\n      The OnBackPressedDispatcher controls how back button events are dispatched\n      to one or more {@link OnBackPressedCallback} objects.")
-    @SuppressLint("MissingSuperCall")
-    override fun onBackPressed() {
-        alertExit()
-    }
 
 }

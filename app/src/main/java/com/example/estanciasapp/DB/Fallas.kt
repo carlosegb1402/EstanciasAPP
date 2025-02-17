@@ -1,6 +1,7 @@
 package com.example.estanciasapp.DB
 
-class Fallas {
+ class Fallas {
+
     var eqpfal:Int=0
     var fecfal:String=""
     var estfal:Int=0

@@ -68,7 +68,7 @@ class DbHandler(private var context: Context) : SQLiteOpenHelper(context, DATABA
         if (result == (-1).toLong()) {
             Toast.makeText(context, "Error al Almacenar Localmente", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(context, "Almacenado Localmente", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Registro Almacenado Localmente", Toast.LENGTH_SHORT).show()
         }
     }
 

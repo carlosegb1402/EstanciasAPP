@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -38,7 +37,7 @@ class Formulario : AppCompatActivity() {
     private lateinit var cancelarBTN: Button
     private lateinit var registrarBTN: Button
 
-    // Datos
+    //Variable Datos
     private lateinit var idEquipo: String
     private lateinit var nombreEquipo: String
     private lateinit var numeroEquipo: String
@@ -53,16 +52,16 @@ class Formulario : AppCompatActivity() {
         initComponents()
         obtenerInformacionEquipo()
         setButtonListeners()
+
     }
 
-    suspend fun isInternetAvailable(context: Context): Boolean {
-        if (!isNetworkConnected(context)) return false // Primero verifica si hay conexión de red
+     suspend fun isInternetAvailable(context: Context): Boolean {
+        if (!isNetworkConnected(context)) return false
 
         return withContext(Dispatchers.IO) {
             try {
-                // Intenta conectarse a Google DNS (8.8.8.8) en el puerto 53
                 Socket().use { socket ->
-                    socket.connect(InetSocketAddress("8.8.8.8", 53), 500)
+                    socket.connect(InetSocketAddress("8.8.8.8", 53), 1000)
                     true
                 }
             } catch (e: Exception) {
@@ -71,8 +70,7 @@ class Formulario : AppCompatActivity() {
         }
     }
 
-    // Verificar si hay red activa (Wi-Fi o Datos Móviles)
-    fun isNetworkConnected(context: Context): Boolean {
+     fun isNetworkConnected(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = connectivityManager.activeNetwork ?: return false
         val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
@@ -100,6 +98,7 @@ class Formulario : AppCompatActivity() {
         } else {
             actQR()
         }
+
     }
 
     private fun initComponents() {
@@ -135,13 +134,17 @@ class Formulario : AppCompatActivity() {
 
         //BTN REGISTRAR
         registrarBTN.setOnClickListener {
-            AlertDialog.Builder(this)
-                .setMessage("¿Seguro que desea realizar el registro?")
-                .setCancelable(false)
-                .setTitle("Confirmación")
-                .setPositiveButton("Sí") { _, _ -> fnRegistrar() }
-                .setNegativeButton("No", null)
-                .show()
+            if (observacionesET.text.isEmpty()) FnClass().showToast(this,"Hay Campos Vacíos")
+
+            else {
+                AlertDialog.Builder(this)
+                    .setMessage("¿Seguro que desea realizar el registro?")
+                    .setCancelable(false)
+                    .setTitle("Confirmación")
+                    .setPositiveButton("Sí") { _, _ -> fnRegistrar() }
+                    .setNegativeButton("No", null)
+                    .show()
+            }
         }
     }
 
@@ -157,14 +160,11 @@ class Formulario : AppCompatActivity() {
         val db = DbHandler(this)
         val listaPending=db.getPendingFallas()
 
-        if (observacionesET.text.isEmpty()) {
-            FnClass().showToast(this,"Hay Campos Vacíos")
-        }else {
-            val fallas = Fallas(
+        val fallas = Fallas(
                 eqpfal = idEquipo.toInt(),
                 fecfal = obtenerFechaActual(),
                 estfal = estadoSP.getSelectedItem().toString().toInt(),
-                obsfal = observacionesET.text.toString(),
+                obsfal = observacionesET.text.toString()
             )
 
             CoroutineScope(Dispatchers.Main).launch {
@@ -186,7 +186,7 @@ class Formulario : AppCompatActivity() {
             }
 
         }
-    }
+
 
 
     //FN MOSTRAR DIALOG

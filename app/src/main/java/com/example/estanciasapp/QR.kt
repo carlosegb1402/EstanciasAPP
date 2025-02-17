@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Size
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -32,6 +33,16 @@ class QR : AppCompatActivity() {
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var barcodeScanner:BarcodeScanner
     private lateinit var msgTV:TextView
+    private lateinit var escanearBTN:Button
+
+
+
+    //Variable Datos
+    private lateinit var idEquipo: String
+    private lateinit var nombreEquipo: String
+    private lateinit var numeroEquipo: String
+    private lateinit var areaEquipo: String
+    private lateinit var modeloEquipo: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,14 +52,14 @@ class QR : AppCompatActivity() {
         cameraExecutor=Executors.newSingleThreadExecutor()
         barcodeScanner=BarcodeScanning.getClient()
         msgTV=binding.msgTV
+        escanearBTN=binding.escanearBTN
 
         val requestPermissionLauncher=registerForActivityResult(ActivityResultContracts.RequestPermission()){isGranted->
             if(isGranted){
-                startCamera()
+                    startCamera()
             }else{
                 Toast.makeText(applicationContext,"No cuenta con los permisos necesarios para usar la Camara",Toast.LENGTH_SHORT).show()
             }
-
         }
         requestPermissionLauncher.launch(android.Manifest.permission.CAMERA)
     }
@@ -64,7 +75,7 @@ class QR : AppCompatActivity() {
             val imageAnalyzer=ImageAnalysis.Builder().setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build().also { it.setAnalyzer(cameraExecutor) { imageProxy ->
                 processImageProxy(imageProxy)
             }
-            }
+                }
             val cameraSelector= CameraSelector.DEFAULT_BACK_CAMERA
             cameraProvider.bindToLifecycle(this,cameraSelector,preview,imageAnalyzer)
         },ContextCompat.getMainExecutor(this))
@@ -80,13 +91,15 @@ class QR : AppCompatActivity() {
                     msgTV.text = ""
                 } else {
                     for (barcode in barcodes) {
-                        handleBarcode(barcode)
+                        escanearBTN.setOnClickListener{
+                        handleBarcode(barcode)}
                     }
                 }
             }.addOnFailureListener{Toast.makeText(applicationContext,"Ocurrio un error al escanear el codigo",Toast.LENGTH_SHORT).show()}.addOnCompleteListener { imageProxy.close() }
         }
     }
-//,
+
+
     @SuppressLint("SetTextI18n")
     private fun handleBarcode(barcode: Barcode) {
 
@@ -117,20 +130,16 @@ class QR : AppCompatActivity() {
         val text = txt ?: ""
 
         if (regex.containsMatchIn(text)) {
+                cameraExecutor.shutdown()
+                val formularioIntent = Intent(this, Formulario::class.java)
+                formularioIntent.putExtra("informacion",txt)
 
-            cameraExecutor.shutdown()
-
-            val formularioIntent = Intent(this, Formulario::class.java)
-
-            formularioIntent.putExtra("informacion",txt)
-
-            startActivity(formularioIntent)
-
-            finish()
-        }
-        else{
-            msgTV.text = "El Codigo QR No Es Valido"
-        }
+                startActivity(formularioIntent)
+                finish()
+            }
+            else{
+                msgTV.text = "El Codigo QR No Es Valido"
+            }
 
 
     }

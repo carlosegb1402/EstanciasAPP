@@ -3,6 +3,7 @@ package com.example.estanciasapp
 import android.content.Context
 
 import android.widget.Toast
+import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
@@ -13,20 +14,19 @@ class FnClass {
 
 
     //Funcion Mandar UN Solo Request
-    fun sendToServer(context: Context,falla: Fallas) {
-
+    fun sendToServer(context: Context, falla: Fallas) {
         val db = DbHandler(context)
         val url = "http://172.16.13.213/wServices/registrarFalla.php"
 
         val stringRequest = object : StringRequest(
             Method.POST, url,
             Response.Listener { response ->
-                if (response.contains("Falla registrada exitosamente")) showToast(context,"Registro Exitoso")
-
+                if (response.contains("Falla registrada exitosamente"))
+                    showToast(context, "Registro Exitoso")
             },
             Response.ErrorListener { _ ->
                 db.insertDATA(falla)
-                showToast(context,"Error de conexión con el servidor")
+                showToast(context, "Error de conexión con el servidor")
             }
         ) {
             override fun getParams(): MutableMap<String, String> {
@@ -38,8 +38,14 @@ class FnClass {
                 )
             }
         }
+
+        stringRequest.retryPolicy = DefaultRetryPolicy(
+            3000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        )
+
         Volley.newRequestQueue(context).add(stringRequest)
     }
+
 
     //fn sincronizacion de datos locales
     fun syncPendingFallas(context: Context, onComplete: () -> Unit) {
@@ -96,8 +102,11 @@ class FnClass {
                 )
             }
         }
-
+        stringRequest.retryPolicy = DefaultRetryPolicy(
+            3000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        )
         Volley.newRequestQueue(context).add(stringRequest)
+
     }
 
 
