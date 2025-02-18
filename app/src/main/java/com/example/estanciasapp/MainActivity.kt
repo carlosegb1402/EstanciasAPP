@@ -2,19 +2,12 @@ package com.example.estanciasapp
 
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.SharedPreferences.Editor
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
@@ -24,94 +17,82 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import org.json.JSONException
 import org.json.JSONObject
-import kotlin.properties.Delegates
 
 class MainActivity : AppCompatActivity() {
 
-    //Declaracion UI
-    private lateinit var etUsuario : EditText
-    private lateinit var etContrasena : EditText
-    private lateinit var btnEntrar : Button
+    //VARIABLES
+    private lateinit var etUsuario: EditText
+    private lateinit var etContrasena: EditText
+    private lateinit var btnEntrar: Button
     private lateinit var btnSalir: Button
-    private lateinit var recordarCB:CheckBox
+    private lateinit var recordarCB: CheckBox
     private lateinit var loginPreferences: SharedPreferences
-    private lateinit var loginPrefEditor: Editor
-    private var saveLogin by Delegates.notNull<Boolean>()
-    private lateinit var loadingLayout: LinearLayout
-    private lateinit var loadingTV:TextView
-    private lateinit var contenedorLayout:LinearLayout
+    private lateinit var loginPrefEditor: SharedPreferences.Editor
+    private var saveLogin = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+
+        //FN BOTON RETROCEDER
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 exitDialog()
             }
         })
 
-//      val dbHandler = DbHandler(this)
-//      val db = dbHandler.openDatabase()
-//      dbHandler.checkAndCreateTable(db)
+        //FN SHARED PREFERENCES
+        loginPreferences = getSharedPreferences("loginPref", MODE_PRIVATE)
+        loginPrefEditor = loginPreferences.edit()
+        saveLogin = loginPreferences.getBoolean("saveLogin", false)
 
-        loginPreferences=getSharedPreferences("loginPref", MODE_PRIVATE)
-        loginPrefEditor=loginPreferences.edit()
-        saveLogin=loginPreferences.getBoolean("saveLogin",false)
-
+        //INICIALIZAR COMPONENTES
         iniciarComponentes()
         eventsBTN()
 
-        if (saveLogin){
-            etUsuario.setText(loginPreferences.getString("usuario",""))
-            etContrasena.setText(loginPreferences.getString("contrasena",""))
-            recordarCB.isChecked=true
-        }else{
+        //FN RECORDAR USUARIO
+        if (saveLogin) {
+            etUsuario.setText(loginPreferences.getString("usuario", ""))
+            etContrasena.setText(loginPreferences.getString("contrasena", ""))
+            btnEntrar.isEnabled = true
+            recordarCB.isChecked = true
+        } else {
             limpiarInputs()
         }
 
+        //VALIDAR CAMPOS
         val textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val text1 = etUsuario.text.toString()
-                val text2 = etContrasena.text.toString()
-                btnEntrar.isEnabled = text1.isNotEmpty() && text2.isNotEmpty()
+                btnEntrar.isEnabled = etUsuario.text.isNotEmpty() && etContrasena.text.isNotEmpty()
             }
 
             override fun afterTextChanged(s: Editable?) {}
         }
 
-
         etUsuario.addTextChangedListener(textWatcher)
         etContrasena.addTextChangedListener(textWatcher)
     }
 
-    //UI Componentes
+    //FN INICIALIZAR COMPONENTES
     private fun iniciarComponentes() {
         etUsuario = findViewById(R.id.etUsuario)
         etContrasena = findViewById(R.id.etcontrasena)
         btnEntrar = findViewById(R.id.btnEntrar)
         btnSalir = findViewById(R.id.btnSalir)
         recordarCB = findViewById(R.id.recordarCB)
-        loadingLayout = findViewById(R.id.loadingLayout)
-        contenedorLayout=findViewById(R.id.layoutContenedor)
-        loadingTV=findViewById(R.id.subiendoTV)
     }
 
-    //FN Botones
-    private fun eventsBTN(){
-        ///BTN ENTRAR
-        btnEntrar.setOnClickListener{
-          fnAcceder()
-        }
-        //BTN SALIR
-        btnSalir.setOnClickListener{ exitDialog() }
+    //FN EVENTOS BOTONES
+    private fun eventsBTN() {
+        btnEntrar.setOnClickListener { fnAcceder() }
+        btnSalir.setOnClickListener { exitDialog() }
     }
 
-    //FN Recordar Usuario
-    private fun fnRecordar(){
+    //FN RECORDAR USUARIO
+    private fun fnRecordar() {
         with(loginPrefEditor) {
             if (recordarCB.isChecked) {
                 putBoolean("saveLogin", true)
@@ -126,76 +107,76 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //FN ACCEDER
+    private fun fnAcceder() {
 
-    //FN Acceder
-    private  fun fnAcceder() {
+        val loadingDialog = LoadingDialog(this)
+        loadingDialog.startLoadingDialog()
+
+        val baseUrl = getString(R.string.base_url)
+        val url = "$baseUrl/verificarUsuario.php"
+
         val usuario = etUsuario.text.toString()
         val contrasena = etContrasena.text.toString()
 
-        if (usuario.isEmpty() || contrasena.isEmpty()) {
-            showMSG("Ingrese Todos Los Datos")
-            return
-        }
-
-        FnClass().checkConnection { isConnected ->
-
-            runOnUiThread {
-                val url = "http://172.16.13.213/wServices/verificarUsuario.php"
-                val request = object : StringRequest(
-                    Method.POST, url,
-                    Response.Listener { response ->
-                        try {
-                            val jsonResponse = JSONObject(response)
-                            if (jsonResponse.getString("status") == "success") {
-                                fnRecordar()
-                                showMSG("Verificacion Exitosa")
-                                actQR()
-                            } else {
-                                showMSG("Usuario Invalido")
-                            }
-                        } catch (e: JSONException) {
-                            e.printStackTrace()
-                            showMSG("ERROR RESPUESTA SERVIDOR")
-                        }
-                    },
-                    Response.ErrorListener { error ->
-                        error.printStackTrace()
-                        showMSG("Error De Conexion")
-                    }) {
-
-                    override fun getParams(): Map<String, String> {
-                        val params = HashMap<String, String>()
-                        params["usuario"] = usuario
-                        params["contrasena"] = contrasena
-                        return params
+        val request = object : StringRequest(Method.POST, url,
+            Response.Listener { response ->
+                try {
+                    val jsonResponse = JSONObject(response)
+                    if (jsonResponse.getString("status") == "success") {
+                        fnRecordar()
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            loadingDialog.dismissDialog()
+                            actQR()
+                            showMSG("Verificación Exitosa")
+                        }, 1000)
+                    } else {
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            loadingDialog.dismissDialog()
+                            showMSG("Credenciales Invalidas")
+                        }, 800)
                     }
+                } catch (e: JSONException) {
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        loadingDialog.dismissDialog()
+                        showMSG("Error En La Respuesta Del Servidor")
+                    }, 800)
                 }
-                val requestQueue = Volley.newRequestQueue(this)
-                requestQueue.add(request)
+            },
+            Response.ErrorListener {
+                Handler(Looper.getMainLooper()).postDelayed({
+                    loadingDialog.dismissDialog()
+                    showMSG("Hubo Un Error En La Conexion")
+                }, 800)
+            }) {
+
+            override fun getParams(): Map<String, String> {
+                return hashMapOf("usuario" to usuario, "contrasena" to contrasena)
             }
         }
 
+        Volley.newRequestQueue(this).add(request)
     }
 
-
-    //FN Intent QR
+    //FN INTENT QR
     private fun actQR() {
-//      menuPrinIntent.putExtra("usuario", this)
-        startActivity(Intent(this@MainActivity,QR::class.java))
+        startActivity(Intent(this, QR::class.java))
         finish()
     }
 
-    //FN Limpiar Inputs
-    private fun limpiarInputs(){
-        etUsuario.setText("")
-        etContrasena.setText("")
+    //FN LIMPIART EDIT TEXT
+    private fun limpiarInputs() {
+        etUsuario.text.clear()
+        etContrasena.text.clear()
     }
 
-    //FN Show Toast
-    private fun showMSG(msg:String){Toast.makeText(this,msg,Toast.LENGTH_SHORT).show()}
+    //FN MOSTRAR TOAST
+    private fun showMSG(msg: String) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    }
 
-    //FN Show Dialog
-    private fun exitDialog(){
+    //FN DIALOG EXIT
+    private fun exitDialog() {
         AlertDialog.Builder(this)
             .setTitle("Aplicación")
             .setMessage("¿Estás seguro que deseas salir?")

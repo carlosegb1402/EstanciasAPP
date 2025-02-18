@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Size
 import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.OptIn
@@ -32,17 +31,9 @@ class QR : AppCompatActivity() {
     private lateinit var binding: ActivityQrBinding
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var barcodeScanner:BarcodeScanner
-    private lateinit var msgTV:TextView
     private lateinit var escanearBTN:Button
 
 
-
-    //Variable Datos
-    private lateinit var idEquipo: String
-    private lateinit var nombreEquipo: String
-    private lateinit var numeroEquipo: String
-    private lateinit var areaEquipo: String
-    private lateinit var modeloEquipo: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,7 +42,6 @@ class QR : AppCompatActivity() {
 
         cameraExecutor=Executors.newSingleThreadExecutor()
         barcodeScanner=BarcodeScanning.getClient()
-        msgTV=binding.msgTV
         escanearBTN=binding.escanearBTN
 
         val requestPermissionLauncher=registerForActivityResult(ActivityResultContracts.RequestPermission()){isGranted->
@@ -93,7 +83,8 @@ class QR : AppCompatActivity() {
                     for (barcode in barcodes) {
                         escanearBTN.isEnabled=true
                         escanearBTN.setOnClickListener{
-                        handleBarcode(barcode)}
+                        handleBarcode(barcode)
+                        }
                     }
                 }
             }.addOnFailureListener{Toast.makeText(applicationContext,"Ocurrio un error al escanear el codigo",Toast.LENGTH_SHORT).show()}.addOnCompleteListener { imageProxy.close() }

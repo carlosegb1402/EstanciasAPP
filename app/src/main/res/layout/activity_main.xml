@@ -55,11 +55,11 @@
                     android:textColor="@color/principal"
                     android:textSize="20dp"></EditText>
 
-                <EditText
+                    <EditText
+                    android:layout_marginTop="15dp"
                     android:id="@+id/etcontrasena"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:layout_marginTop="15dp"
                     android:background="@drawable/background_edit_text"
                     android:fontFamily="@font/jetbrains_mono_semibold"
                     android:hint="Contraseña"
@@ -67,7 +67,13 @@
                     android:text="12345"
                     android:textAlignment="center"
                     android:textColor="@color/principal"
-                    android:textSize="20dp"></EditText>
+                    android:textSize="20dp"
+
+                        >
+                </EditText>
+
+
+
 
                 <CheckBox
                     android:fontFamily="@font/jetbrains_mono_semibold"
@@ -110,33 +116,7 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/loadingLayout"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@color/white"
-        android:gravity="center"
-        >
-        <ProgressBar
-        android:id="@+id/progressBar"
-        android:indeterminateTint="@color/principal"
-        android:layout_width="70sp"
-        android:layout_height="70sp"
-        ></ProgressBar>
-        <TextView
-            android:textAllCaps="true"
-            android:id="@+id/subiendoTV"
-            android:layout_marginTop="10dp"
-            android:textAlignment="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/jetbrains_mono_semibold"
-            android:text=""
-            android:textColor="@color/principal"
-            android:textSize="25sp"></TextView>
-    </LinearLayout>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,17 +14,6 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <TextView
-            android:textAlignment="center"
-            android:id="@+id/msgTV"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/jetbrains_mono_semibold"
-            android:text=""
-            android:textColor="@color/white"
-            android:textSize="20dp"
-            ></TextView>
-
         <androidx.cardview.widget.CardView
             android:layout_width="270dp"
             android:layout_height="350dp"
@@ -32,29 +21,35 @@
             app:cardElevation="20dp"
             android:background="@drawable/background_btn_login"
             >
-        <androidx.camera.view.PreviewView
-            android:layout_gravity="center"
-            android:id="@+id/previewView"
-            android:layout_width="250dp"
-            android:layout_height="250dp">
-        </androidx.camera.view.PreviewView>
+            <LinearLayout
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                >
+                <androidx.camera.view.PreviewView
+                    android:id="@+id/previewView"
+                    android:layout_width="250dp"
+                    android:layout_height="250dp">
+                </androidx.camera.view.PreviewView>
 
-            <Button
-                android:layout_gravity="center"
-                android:background="@drawable/button_background"
-                android:enabled="false"
-                android:textStyle="bold"
-                android:textAllCaps="false"
-                android:id="@+id/escanearBTN"
-                android:layout_width="220dp"
-                android:layout_height="55dp"
-                android:layout_marginTop="25dp"
-                android:fontFamily="@font/jetbrains_mono_semibold"
-                android:text="Escanear"
-                android:textColor="@color/principal"
-                android:textSize="30dp">
+                <Button
+                    android:background="@drawable/background_btn_login"
+                    android:enabled="false"
+                    android:textStyle="bold"
+                    android:textAllCaps="false"
+                    android:id="@+id/escanearBTN"
+                    android:layout_width="220dp"
+                    android:layout_height="55dp"
+                    android:layout_marginTop="25dp"
+                    android:fontFamily="@font/jetbrains_mono_semibold"
+                    android:text="Escanear"
+                    android:textColor="@color/white"
+                    android:textSize="30dp">
 
-            </Button>
+                </Button>
+            </LinearLayout>
+
 
         </androidx.cardview.widget.CardView>
 

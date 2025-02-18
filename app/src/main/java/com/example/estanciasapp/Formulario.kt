@@ -1,33 +1,15 @@
 package com.example.estanciasapp
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
-import android.widget.LinearLayout
 import android.widget.Spinner
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.estanciasapp.DB.DbHandler
 import com.example.estanciasapp.DB.Fallas
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import java.io.IOException
-import java.net.InetSocketAddress
-import java.net.Socket
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -61,27 +43,6 @@ class Formulario : AppCompatActivity() {
         setButtonListeners()
 
     }
-
-    fun checkConnection(callback: (Boolean) -> Unit) {
-        val url = "https://www.google.com"
-
-        val client = OkHttpClient()
-        val request = Request.Builder().url(url).build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.w("CheckConnection", "SIN CONEXIÓN")
-                callback(false)
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                val isConnected = response.isSuccessful
-                Log.w("CheckConnection", "CONEXIÓN EXITOSA")
-                callback(isConnected)
-            }
-        })
-    }
-
 
 
     // Obtener información del intent
@@ -174,35 +135,27 @@ class Formulario : AppCompatActivity() {
         )
 
 
-        checkConnection { isConnected ->
-            if (isConnected) {
-                FnClass().showToast(this, "Hay conexión a internet.")
-            } else {
-                FnClass().showToast(this, "No hay conexión a internet.")
-            }
-        }
 
-
-        /*if (listaPending.isNotEmpty()) {
+        if(listaPending.isNotEmpty()) {
                     FnClass().syncPendingFallas(this@Formulario) {
+
                         FnClass().sendToServer(this@Formulario, fallas)
                         limpiar()
                         actQR()
+
                     }
                 }
 
-              else if(isInternetAvailable(this@Formulario)){
-                    FnClass().sendToServer(this@Formulario, fallas)
-                    limpiar()
-                    actQR()
-                }else{
+        else{
+            FnClass().sendToServer(this@Formulario, fallas)
+            limpiar()
+            actQR()
+        }
+      /*  else{
                     limpiar()
                     db.insertDATA(fallas)
                     actQR()
-                }
-
         }*/
-
     }
 
     //FN MOSTRAR DIALOG
@@ -221,9 +174,4 @@ class Formulario : AppCompatActivity() {
         finish()
     }
 
-    @Deprecated("This method has been deprecated in favor of using the\n      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.\n      The OnBackPressedDispatcher controls how back button events are dispatched\n      to one or more {@link OnBackPressedCallback} objects.")
-    @SuppressLint("MissingSuperCall")
-    override fun onBackPressed() {
-        showExitDialog()
-    }
 }

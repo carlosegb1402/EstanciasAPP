@@ -66,7 +66,7 @@ class DbHandler(private var context: Context) : SQLiteOpenHelper(context, DATABA
         val result = db.insert(TABLE_NAME, null, cv)
 
         if (result == (-1).toLong()) {
-            Toast.makeText(context, "Error al Almacenar Localmente", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Se Produjo Un Error, Intenta De Nuevo", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(context, "Registro Almacenado Localmente", Toast.LENGTH_SHORT).show()
         }
