@@ -27,7 +27,7 @@
 
         <androidx.cardview.widget.CardView
             android:layout_width="270dp"
-            android:layout_height="270dp"
+            android:layout_height="350dp"
             app:cardCornerRadius="3dp"
             app:cardElevation="20dp"
             android:background="@drawable/background_btn_login"
@@ -39,24 +39,25 @@
             android:layout_height="250dp">
         </androidx.camera.view.PreviewView>
 
+            <Button
+                android:layout_gravity="center"
+                android:background="@drawable/button_background"
+                android:enabled="false"
+                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:id="@+id/escanearBTN"
+                android:layout_width="220dp"
+                android:layout_height="55dp"
+                android:layout_marginTop="25dp"
+                android:fontFamily="@font/jetbrains_mono_semibold"
+                android:text="Escanear"
+                android:textColor="@color/principal"
+                android:textSize="30dp">
+
+            </Button>
 
         </androidx.cardview.widget.CardView>
 
-        <Button
-            android:background="@drawable/button_background"
-            android:enabled="false"
-            android:textStyle="bold"
-            android:textAllCaps="false"
-            android:id="@+id/escanearBTN"
-            android:layout_width="220dp"
-            android:layout_height="55dp"
-            android:layout_marginTop="25dp"
-            android:fontFamily="@font/jetbrains_mono_semibold"
-            android:text="Escanear"
-            android:textColor="@color/principal"
-            android:textSize="30dp">
-
-        </Button>
 
     </LinearLayout>
 

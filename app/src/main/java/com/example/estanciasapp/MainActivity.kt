@@ -75,7 +75,6 @@ class MainActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // Comprobar si ambos EditText tienen texto
                 val text1 = etUsuario.text.toString()
                 val text2 = etContrasena.text.toString()
                 btnEntrar.isEnabled = text1.isNotEmpty() && text2.isNotEmpty()
