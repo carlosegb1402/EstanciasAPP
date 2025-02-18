@@ -30,7 +30,7 @@
             android:layout_height="270dp"
             app:cardCornerRadius="3dp"
             app:cardElevation="20dp"
-            android:background="@drawable/background_btn"
+            android:background="@drawable/background_btn_login"
             >
         <androidx.camera.view.PreviewView
             android:layout_gravity="center"
@@ -43,13 +43,14 @@
         </androidx.cardview.widget.CardView>
 
         <Button
+            android:background="@drawable/button_background"
+            android:enabled="false"
             android:textStyle="bold"
             android:textAllCaps="false"
             android:id="@+id/escanearBTN"
             android:layout_width="220dp"
             android:layout_height="55dp"
             android:layout_marginTop="25dp"
-            android:background="@drawable/background_btn_qr"
             android:fontFamily="@font/jetbrains_mono_semibold"
             android:text="Escanear"
             android:textColor="@color/principal"

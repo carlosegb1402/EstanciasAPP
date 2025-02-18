@@ -124,7 +124,6 @@ class FnClass {
     //FN CHECK CONNECTION
     fun checkConnection(callback: (Boolean) -> Unit) {
         val url = "https://www.google.com"
-
         val client = OkHttpClient()
         val request = Request.Builder().url(url).build()
 

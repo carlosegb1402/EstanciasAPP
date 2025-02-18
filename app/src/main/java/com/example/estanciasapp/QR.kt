@@ -88,9 +88,10 @@ class QR : AppCompatActivity() {
             val image = InputImage.fromMediaImage(mediaImage,imageProxy.imageInfo.rotationDegrees)
             barcodeScanner.process(image).addOnSuccessListener { barcodes->
                 if (barcodes.isEmpty()) {
-                    msgTV.text = ""
+                    escanearBTN.isEnabled=false
                 } else {
                     for (barcode in barcodes) {
+                        escanearBTN.isEnabled=true
                         escanearBTN.setOnClickListener{
                         handleBarcode(barcode)}
                     }
@@ -138,7 +139,7 @@ class QR : AppCompatActivity() {
                 finish()
             }
             else{
-                msgTV.text = "El Codigo QR No Es Valido"
+                FnClass().showToast(this,"El Codigo QR No Es Valido")
             }
 
 

@@ -10,6 +10,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.Spinner
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -43,7 +44,6 @@ class Formulario : AppCompatActivity() {
     private lateinit var limpiarBTN: ImageButton
     private lateinit var cancelarBTN: Button
     private lateinit var registrarBTN: Button
-
     //Variable Datos
     private lateinit var idEquipo: String
     private lateinit var nombreEquipo: String
