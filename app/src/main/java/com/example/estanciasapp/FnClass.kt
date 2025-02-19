@@ -1,15 +1,14 @@
 package com.example.estanciasapp
-
 import android.content.Context
 import android.util.Log
-
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-import com.example.estanciasapp.DB.DbHandler
-import com.example.estanciasapp.DB.Fallas
+/*import com.example.estanciasapp.db.DbHandler
+import com.example.estanciasapp.db.Fallas*/
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -18,11 +17,12 @@ import java.io.IOException
 
 class FnClass {
 
-
+/*
     //Funcion Mandar UN Solo Request
     fun sendToServer(context: Context, falla: Fallas) {
         val db = DbHandler(context)
-        val url = "http://172.16.13.213/wServices/registrarFalla.php"
+        val baseUrl = ContextCompat.getString(context,R.string.base_url)
+        val url = "$baseUrl/verificarUsuario.php"
 
         val stringRequest = object : StringRequest(
             Method.POST, url,
@@ -79,7 +79,8 @@ class FnClass {
         }
 
         val falla = fallasList[index]
-        val url = "http:/172.16.13.213/wServices/registrarFalla.php"
+        val baseUrl = ContextCompat.getString(context,R.string.base_url)
+        val url = "$baseUrl/verificarUsuario.php"
 
         val stringRequest = object : StringRequest(
             Method.POST, url,
@@ -113,7 +114,7 @@ class FnClass {
         )
         Volley.newRequestQueue(context).add(stringRequest)
 
-    }
+    }*/
 
 
     //FN MOSTRAR MSG
