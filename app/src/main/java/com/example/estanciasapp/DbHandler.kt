@@ -29,10 +29,43 @@ class DbHandler(private var context: Context) : SQLiteOpenHelper(context, DATABA
 
     override fun onCreate(db: SQLiteDatabase?) {
         checkAndCreateTable(db)
+        createTableUsuarios(db)
+        insertUsuariosPorDefecto(db)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
 
+    }
+
+    private fun createTableUsuarios(db: SQLiteDatabase?) {
+        val createTable = """
+        CREATE TABLE $TABLE_NAME_USUARIOS (
+            $COL_USER TEXT PRIMARY KEY,
+            $COL_PASS TEXT DEFAULT NULL
+        );
+    """.trimIndent()
+        db?.execSQL(createTable)
+        Log.d("DB", "Tabla $TABLE_NAME_USUARIOS creada exitosamente.")
+    }
+
+    private fun insertUsuariosPorDefecto(db: SQLiteDatabase?) {
+        val defaultUsuarios = listOf(
+            Pair("cegb1402", "cegb"),
+            Pair("usuario2", "contrasena2"),
+            Pair("usuario3", "contrasena3")
+        )
+
+        val cv = ContentValues()
+        for (usuario in defaultUsuarios) {
+            cv.put(COL_USER, usuario.first)
+            cv.put(COL_PASS, usuario.second)
+            val result = db?.insert(TABLE_NAME_USUARIOS, null, cv)
+            if (result == (-1).toLong()) {
+                Log.e("DB", "Error al insertar usuario por defecto")
+            } else {
+                Log.d("DB", "Usuario por defecto insertado: ${usuario.first}")
+            }
+        }
     }
 
     private fun checkAndCreateTable(db: SQLiteDatabase?) {
@@ -57,12 +90,6 @@ class DbHandler(private var context: Context) : SQLiteOpenHelper(context, DATABA
             cursor.close()
         }
     }
-
-  /*  fun createTableUsers(db: SQLiteDatabase?) {
-        val createTable = """CREATE TABLE $TABLE_NAME_USUARIOS ($COL_IDFAL INTEGER PRIMARY KEY AUTOINCREMENT, $COL_USER TEXT DEFAULT NULL,
-            | $COL_PASS TEXT DEFAULT NULL)""".trimMargin()
-
-    }*/
 
     fun insertDATA(fallas: Fallas) {
 
@@ -91,6 +118,7 @@ class DbHandler(private var context: Context) : SQLiteOpenHelper(context, DATABA
         if (cursor.moveToFirst()) {
             do {
                 val fallas = Fallas(
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COL_IDFAL)),
                     cursor.getInt(cursor.getColumnIndexOrThrow(COL_EQPFAL)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COL_FECFAL)),
                     cursor.getInt(cursor.getColumnIndexOrThrow(COL_ESTFAL)),
@@ -103,9 +131,9 @@ class DbHandler(private var context: Context) : SQLiteOpenHelper(context, DATABA
         return fallasList
     }
 
-    fun deleteFalla(eqpfal: Int) {
+    fun deleteFalla(idfal: Int) {
         val db = this.writableDatabase
-        db.delete(TABLE_NAME_FALLAS, "$COL_EQPFAL = ?", arrayOf(eqpfal.toString()))
+        db.delete(TABLE_NAME_FALLAS, "$COL_IDFAL = ?", arrayOf(idfal.toString()))
     }
 
 }

@@ -122,24 +122,4 @@ class FnClass {
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
     }
 
-    //FN CHECK CONNECTION
-    fun checkConnection(callback: (Boolean) -> Unit) {
-        val url = "https://www.google.com"
-        val client = OkHttpClient()
-        val request = Request.Builder().url(url).build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.w("CheckConnection", "SIN CONEXIÓN")
-                callback(false)
-            }
-
-            override fun onResponse(call: Call, response: okhttp3.Response) {
-                val isConnected = response.isSuccessful
-                Log.w("CheckConnection", "CONEXIÓN EXITOSA")
-                callback(isConnected)
-            }
-        })
-    }
-
 }

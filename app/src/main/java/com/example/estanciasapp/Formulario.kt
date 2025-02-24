@@ -50,6 +50,9 @@ class Formulario : AppCompatActivity() {
 
         loadingDialog = LoadingDialog(this)
         db= DbHandler(this)
+        db.openDatabase()
+
+        syncPendingFallas()
 
         initComponents()
         obtenerInformacionEquipo()
@@ -114,9 +117,6 @@ class Formulario : AppCompatActivity() {
 
         //BTN REGISTRAR
         registrarBTN.setOnClickListener {
-            if (observacionesET.text.isEmpty()) FnClass().showToast(this,"Hay Campos Vacíos")
-
-            else {
                 AlertDialog.Builder(this)
                     .setMessage("¿Seguro que desea realizar el registro?")
                     .setCancelable(false)
@@ -124,7 +124,6 @@ class Formulario : AppCompatActivity() {
                     .setPositiveButton("Sí") { _, _ -> fnRegistrar() }
                     .setNegativeButton("No", null)
                     .show()
-            }
         }
     }
 
@@ -143,9 +142,10 @@ class Formulario : AppCompatActivity() {
             estfal = estadoSP.getSelectedItem().toString().toInt(),
             obsfal = observacionesET.text.toString()
         )
-        sendToServer(fallas)
-    }
 
+        sendToServer(fallas)
+
+    }
 
     //FN MOSTRAR DIALOG
     private fun showExitDialog() {
@@ -158,12 +158,15 @@ class Formulario : AppCompatActivity() {
             .show()
     }
 
+
+    //FN ACTIVIDAD QR
     private fun actQR() {
         startActivity(Intent(this, QR::class.java))
         finish()
     }
 
-    //Funcion Mandar UN Solo Request
+
+    //FN INSERTAR WS
    private fun sendToServer(falla: Fallas) {
 
         limpiar(); loadingDialog.startLoadingDialog()
@@ -174,21 +177,24 @@ class Formulario : AppCompatActivity() {
         val stringRequest = object : StringRequest(
             Method.POST, url,
             Response.Listener { response ->
-                if (response.contains("Falla registrada exitosamente")){
+                if (response.contains("success")){
+
                     Handler(Looper.getMainLooper()).postDelayed({
                         loadingDialog.dismissDialog()
                         FnClass().showToast(this, "Registro Exitoso")
                         actQR()
                     }, 1000)
+
                 }
             },
             Response.ErrorListener { _ ->
+
                 Handler(Looper.getMainLooper()).postDelayed({
                     loadingDialog.dismissDialog()
                     db.insertDATA(falla)
-                    FnClass().showToast(this, "Registro Exitoso")
                     actQR()
                 }, 1000)
+
             }
         ) {
             override fun getParams(): MutableMap<String, String> {
@@ -202,59 +208,56 @@ class Formulario : AppCompatActivity() {
         }
 
         stringRequest.retryPolicy = DefaultRetryPolicy(
-            2500, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+            1000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
         )
-
         Volley.newRequestQueue(this).add(stringRequest)
     }
 
-    /*//fn sincronizacion de datos locales
-    fun syncPendingFallas(context: Context, onComplete: () -> Unit) {
-        val db = DbHandler(context)
+    //FN SINCRONIZACIO DE DATOS LOCALES
+    private fun syncPendingFallas() {
+        val db = DbHandler(this)
         val fallasList = db.getPendingFallas()
 
         if (fallasList.isNotEmpty()) {
-            enviarFallaSecuencialmente(context, fallasList, 0, db, onComplete)
-        } else {
-            onComplete()
+            enviarFallaSecuencialmente(fallasList, 0, db)
         }
+
     }
 
-    //fn subir datos locales
-    fun enviarFallaSecuencialmente(
-        context: Context,
+    //FN SUBIR DATOS LOCALES
+    private fun enviarFallaSecuencialmente(
         fallasList: List<Fallas>,
         index: Int,
-        db: DbHandler,
-        onComplete: () -> Unit
+        db: DbHandler
     ) {
         if (index >= fallasList.size) {
-            onComplete()
             return
         }
-
         val falla = fallasList[index]
-        val baseUrl = ContextCompat.getString(context,R.string.base_url)
-        val url = "$baseUrl/verificarUsuario.php"
-
+        val baseUrl = ContextCompat.getString(this,R.string.base_url)
+        val url = "$baseUrl/registrarFalla.php"
         val stringRequest = object : StringRequest(
             Method.POST, url,
             Response.Listener { response ->
-                if (response.contains("Falla registrada exitosamente")) {
-                    db.deleteFalla(falla.eqpfal)
-                    enviarFallaSecuencialmente(context, fallasList, index + 1, db, onComplete)
+                if (response.contains("success")) {
+                    db.deleteFalla(falla.idfal)
+                    enviarFallaSecuencialmente(fallasList, index + 1, db)
                 } else {
-                    onComplete()
+                    if (index < fallasList.size-1){
+                        enviarFallaSecuencialmente(fallasList, index+1, db)
+                    }
+
                 }
             },
             Response.ErrorListener { _ ->
-                if (index == 0) {
-                    onComplete()
-                } else {
-                    enviarFallaSecuencialmente(context, fallasList, index + 1, db, onComplete)
-                }
+
+                 if (index < fallasList.size-1){
+                     enviarFallaSecuencialmente(fallasList, index+1, db)
+                 }
+
             }
         ) {
+
             override fun getParams(): MutableMap<String, String> {
                 return hashMapOf(
                     "eqpfal" to falla.eqpfal.toString(),
@@ -263,10 +266,11 @@ class Formulario : AppCompatActivity() {
                     "obsfal" to falla.obsfal
                 )
             }
+
         }
-        stringRequest.retryPolicy = DefaultRetryPolicy(
-            3000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
-        )
-        Volley.newRequestQueue(context).add(stringRequest)
-    }*/
+
+        stringRequest.retryPolicy = DefaultRetryPolicy(1000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        Volley.newRequestQueue(this).add(stringRequest)
+    }
+
 }

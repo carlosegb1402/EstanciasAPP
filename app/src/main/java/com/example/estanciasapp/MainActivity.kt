@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recordarCB: CheckBox
     private lateinit var loginPreferences: SharedPreferences
     private lateinit var loginPrefEditor: SharedPreferences.Editor
+    private lateinit var db: DbHandler
     private var saveLogin = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,6 +109,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     //FN ACCEDER
     private fun fnAcceder() {
 
@@ -165,7 +167,7 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
-    //FN LIMPIART EDIT TEXT
+    //FN LIMPIAR EDIT TEXT
     private fun limpiarInputs() {
         etUsuario.text.clear()
         etContrasena.text.clear()
