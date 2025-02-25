@@ -51,8 +51,7 @@ class Formulario : AppCompatActivity() {
         loadingDialog = LoadingDialog(this)
         db= DbHandler(this)
         db.openDatabase()
-
-        syncPendingFallas()
+        FnClass().syncPendingFallas(this)
 
         initComponents()
         obtenerInformacionEquipo()
@@ -210,66 +209,6 @@ class Formulario : AppCompatActivity() {
         stringRequest.retryPolicy = DefaultRetryPolicy(
             1000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
         )
-        Volley.newRequestQueue(this).add(stringRequest)
-    }
-
-    //FN SINCRONIZACIO DE DATOS LOCALES
-    private fun syncPendingFallas() {
-        val db = DbHandler(this)
-        val fallasList = db.getPendingFallas()
-
-        if (fallasList.isNotEmpty()) {
-            enviarFallaSecuencialmente(fallasList, 0, db)
-        }
-
-    }
-
-    //FN SUBIR DATOS LOCALES
-    private fun enviarFallaSecuencialmente(
-        fallasList: List<Fallas>,
-        index: Int,
-        db: DbHandler
-    ) {
-        if (index >= fallasList.size) {
-            return
-        }
-        val falla = fallasList[index]
-        val baseUrl = ContextCompat.getString(this,R.string.base_url)
-        val url = "$baseUrl/registrarFalla.php"
-        val stringRequest = object : StringRequest(
-            Method.POST, url,
-            Response.Listener { response ->
-                if (response.contains("success")) {
-                    db.deleteFalla(falla.idfal)
-                    enviarFallaSecuencialmente(fallasList, index + 1, db)
-                } else {
-                    if (index < fallasList.size-1){
-                        enviarFallaSecuencialmente(fallasList, index+1, db)
-                    }
-
-                }
-            },
-            Response.ErrorListener { _ ->
-
-                 if (index < fallasList.size-1){
-                     enviarFallaSecuencialmente(fallasList, index+1, db)
-                 }
-
-            }
-        ) {
-
-            override fun getParams(): MutableMap<String, String> {
-                return hashMapOf(
-                    "eqpfal" to falla.eqpfal.toString(),
-                    "fecfal" to falla.fecfal,
-                    "estfal" to falla.estfal.toString(),
-                    "obsfal" to falla.obsfal
-                )
-            }
-
-        }
-
-        stringRequest.retryPolicy = DefaultRetryPolicy(1000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
         Volley.newRequestQueue(this).add(stringRequest)
     }
 

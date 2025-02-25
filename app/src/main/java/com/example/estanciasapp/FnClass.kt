@@ -1,125 +1,81 @@
 package com.example.estanciasapp
+
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
-/*import com.example.estanciasapp.db.DbHandler
-import com.example.estanciasapp.db.Fallas*/
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import java.io.IOException
+import com.example.estanciasapp.DB.Fallas
+
 
 class FnClass {
-
-/*
-    //Funcion Mandar UN Solo Request
-    fun sendToServer(context: Context, falla: Fallas) {
-        val db = DbHandler(context)
-        val baseUrl = ContextCompat.getString(context,R.string.base_url)
-        val url = "$baseUrl/verificarUsuario.php"
-
-        val stringRequest = object : StringRequest(
-            Method.POST, url,
-            Response.Listener { response ->
-                if (response.contains("Falla registrada exitosamente"))
-                    showToast(context, "Registro Exitoso")
-            },
-            Response.ErrorListener { _ ->
-                db.insertDATA(falla)
-                showToast(context, "Error de conexión con el servidor")
-            }
-        ) {
-            override fun getParams(): MutableMap<String, String> {
-                return hashMapOf(
-                    "eqpfal" to falla.eqpfal.toString(),
-                    "fecfal" to falla.fecfal,
-                    "estfal" to falla.estfal.toString(),
-                    "obsfal" to falla.obsfal
-                )
-            }
-        }
-
-        stringRequest.retryPolicy = DefaultRetryPolicy(
-            3000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
-        )
-
-        Volley.newRequestQueue(context).add(stringRequest)
-    }
-
-
-    //fn sincronizacion de datos locales
-    fun syncPendingFallas(context: Context, onComplete: () -> Unit) {
-        val db = DbHandler(context)
-        val fallasList = db.getPendingFallas()
-
-        if (fallasList.isNotEmpty()) {
-            enviarFallaSecuencialmente(context, fallasList, 0, db, onComplete)
-        } else {
-            onComplete()
-        }
-    }
-
-    //fn subir datos locales
-    fun enviarFallaSecuencialmente(
-        context: Context,
-        fallasList: List<Fallas>,
-        index: Int,
-        db: DbHandler,
-        onComplete: () -> Unit
-    ) {
-        if (index >= fallasList.size) {
-            onComplete()
-            return
-        }
-
-        val falla = fallasList[index]
-        val baseUrl = ContextCompat.getString(context,R.string.base_url)
-        val url = "$baseUrl/verificarUsuario.php"
-
-        val stringRequest = object : StringRequest(
-            Method.POST, url,
-            Response.Listener { response ->
-                if (response.contains("Falla registrada exitosamente")) {
-                    db.deleteFalla(falla.eqpfal)
-                    enviarFallaSecuencialmente(context, fallasList, index + 1, db, onComplete)
-                } else {
-                    onComplete()
-                }
-            },
-            Response.ErrorListener { _ ->
-                if (index == 0) {
-                    onComplete()
-                } else {
-                    enviarFallaSecuencialmente(context, fallasList, index + 1, db, onComplete)
-                }
-            }
-        ) {
-            override fun getParams(): MutableMap<String, String> {
-                return hashMapOf(
-                    "eqpfal" to falla.eqpfal.toString(),
-                    "fecfal" to falla.fecfal,
-                    "estfal" to falla.estfal.toString(),
-                    "obsfal" to falla.obsfal
-                )
-            }
-        }
-        stringRequest.retryPolicy = DefaultRetryPolicy(
-            3000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
-        )
-        Volley.newRequestQueue(context).add(stringRequest)
-
-    }*/
-
 
     //FN MOSTRAR MSG
      fun showToast(context: Context,msg: String) {
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+    }
+
+    //FN SINCRONIZACIO DE DATOS LOCALES
+     fun syncPendingFallas(context: Context) {
+        val db = DbHandler(context)
+        val fallasList = db.getPendingFallas()
+
+        if (fallasList.isNotEmpty()) {
+            enviarFallaSecuencialmente(context,fallasList, 0, db)
+        }
+
+    }
+
+    //FN SUBIR DATOS LOCALES
+    private fun enviarFallaSecuencialmente(
+        context: Context,
+        fallasList: List<Fallas>,
+        index: Int,
+        db: DbHandler
+    ) {
+        if (index >= fallasList.size) {
+            return
+        }
+        val falla = fallasList[index]
+        val baseUrl = ContextCompat.getString(context,R.string.base_url)
+        val url = "$baseUrl/registrarFalla.php"
+        val stringRequest = object : StringRequest(
+            Method.POST, url,
+            Response.Listener { response ->
+                if (response.contains("success")) {
+                    db.deleteFalla(falla.idfal)
+                    enviarFallaSecuencialmente(context,fallasList, index + 1, db)
+                } else {
+                    if (index < fallasList.size-1){
+                        enviarFallaSecuencialmente(context,fallasList, index+1, db)
+                    }
+
+                }
+            },
+            Response.ErrorListener { _ ->
+
+                if (index < fallasList.size-1){
+                    enviarFallaSecuencialmente(context,fallasList, index+1, db)
+                }
+
+            }
+        ) {
+
+            override fun getParams(): MutableMap<String, String> {
+                return hashMapOf(
+                    "eqpfal" to falla.eqpfal.toString(),
+                    "fecfal" to falla.fecfal,
+                    "estfal" to falla.estfal.toString(),
+                    "obsfal" to falla.obsfal
+                )
+            }
+
+        }
+
+        stringRequest.retryPolicy = DefaultRetryPolicy(1000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        Volley.newRequestQueue(context).add(stringRequest)
     }
 
 }
