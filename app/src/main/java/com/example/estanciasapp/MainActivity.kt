@@ -1,6 +1,7 @@
 package com.example.estanciasapp
 
 import android.content.Intent
+import android.util.Log
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
@@ -141,6 +142,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 } catch (e: JSONException) {
                     Handler(Looper.getMainLooper()).postDelayed({
+                        Log.e("JSONException", "Error en la respuesta del servidor: ${e.message}")
                         loadingDialog.dismissDialog()
                         showMSG("Error En La Respuesta Del Servidor")
                     }, 800)
@@ -148,6 +150,7 @@ class MainActivity : AppCompatActivity() {
             },
             Response.ErrorListener {
                 Handler(Looper.getMainLooper()).postDelayed({
+                    Log.e("ErrorListener", "Error en la conexión: ${it.message}")
                     loadingDialog.dismissDialog()
                     showMSG("Hubo Un Error En La Conexion")
                 }, 800)

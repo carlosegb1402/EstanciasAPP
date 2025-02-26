@@ -66,7 +66,7 @@
             android:fontFamily="@font/jetbrains_mono_semibold"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:text="Modelo Del Equipo:"
+            android:text="Modulo Del Equipo:"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"></TextView>

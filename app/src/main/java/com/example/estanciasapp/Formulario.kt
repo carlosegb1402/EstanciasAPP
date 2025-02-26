@@ -41,7 +41,8 @@ class Formulario : AppCompatActivity() {
     private lateinit var nombreEquipo: String
     private lateinit var numeroEquipo: String
     private lateinit var areaEquipo: String
-    private lateinit var modeloEquipo: String
+    private lateinit var moduloEquipo: String
+    private lateinit var labEquipo: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,6 +50,7 @@ class Formulario : AppCompatActivity() {
         setContentView(R.layout.activity_formulario)
 
         loadingDialog = LoadingDialog(this)
+
         db= DbHandler(this)
         db.openDatabase()
         FnClass().syncPendingFallas(this)
@@ -61,7 +63,8 @@ class Formulario : AppCompatActivity() {
 
 
     // Obtener información del intent
-    private fun obtenerInformacionEquipo(){
+// Obtener información del intent
+    private fun obtenerInformacionEquipo() {
 
         val values = intent.getStringExtra("informacion")?.split(",") ?: listOf()
 
@@ -70,17 +73,27 @@ class Formulario : AppCompatActivity() {
             nombreEquipo = values[1]
             numeroEquipo = values[2]
             areaEquipo = values[3]
-            modeloEquipo = values[4]
+            moduloEquipo = when (values[4]) {
+                "Art" -> "Artemia"
+                "Lar" -> "Larvicultura"
+                "Mad" -> "Maduración"
+                "Ext" -> "Exteriores"
+                "Mic" -> "Microalgas"
+                "Mic-Ext" -> "Microalgas-Exteriores"
+                "Lab" -> "Laboratorio"
+                else -> "Desconocido"
+            }
+            labEquipo = values[5]
+
 
             nombreET.setText(nombreEquipo)
             numeroET.setText(numeroEquipo)
             areaET.setText(areaEquipo)
-            modeloET.setText(modeloEquipo)
+            modeloET.setText(moduloEquipo)
 
         } else {
             actQR()
         }
-
     }
 
     private fun initComponents() {
@@ -138,12 +151,23 @@ class Formulario : AppCompatActivity() {
         val fallas = Fallas(
             eqpfal = idEquipo.toInt(),
             fecfal = obtenerFechaActual(),
-            estfal = estadoSP.getSelectedItem().toString().toInt(),
+            estfal = obtenerEstadoFalla(),
             obsfal = observacionesET.text.toString()
         )
 
         sendToServer(fallas)
 
+    }
+
+    private fun obtenerEstadoFalla(): Int {
+        return when (estadoSP.getSelectedItem().toString()) {
+            "Inhabilitado" -> 0
+            "En Funcionamiento" -> 1
+            "Reparación" -> 2
+            "Precaución" -> 3
+            "Apagado" -> 4
+            else -> 0
+        }
     }
 
     //FN MOSTRAR DIALOG

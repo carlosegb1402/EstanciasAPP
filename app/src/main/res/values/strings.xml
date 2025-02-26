@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">EstanciasAPP</string>
-    <string name="base_url">http://172.16.13.213/wServices/</string>
+    <string name="base_url">http://18.116.55.96/wServices</string>
 </resources>
