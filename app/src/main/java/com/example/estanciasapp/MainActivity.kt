@@ -13,6 +13,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
@@ -28,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnEntrar: Button
     private lateinit var btnSalir: Button
     private lateinit var recordarCB: CheckBox
+    private lateinit var showPass: ImageButton
     private lateinit var loginPreferences: SharedPreferences
     private lateinit var loginPrefEditor: SharedPreferences.Editor
     private lateinit var db: DbHandler
@@ -70,6 +72,8 @@ class MainActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 btnEntrar.isEnabled = etUsuario.text.isNotEmpty() && etContrasena.text.isNotEmpty()
+                showPass.isEnabled=etContrasena.text.isNotEmpty()
+                showPass.isVisible=etContrasena.text.isNotEmpty()
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -86,12 +90,24 @@ class MainActivity : AppCompatActivity() {
         btnEntrar = findViewById(R.id.btnEntrar)
         btnSalir = findViewById(R.id.btnSalir)
         recordarCB = findViewById(R.id.recordarCB)
+        showPass = findViewById(R.id.showPass)
     }
 
     //FN EVENTOS BOTONES
     private fun eventsBTN() {
         btnEntrar.setOnClickListener { fnAcceder() }
         btnSalir.setOnClickListener { exitDialog() }
+        showPass.setOnClickListener { showPass() }
+    }
+
+    private fun showPass() {
+        if (etContrasena.inputType==129){
+            etContrasena.inputType=144
+            showPass.setImageResource(R.drawable.show_pass)
+        }else{
+            etContrasena.inputType=129
+            showPass.setImageResource(R.drawable.show_pass_0)
+        }
     }
 
     //FN RECORDAR USUARIO
@@ -163,6 +179,8 @@ class MainActivity : AppCompatActivity() {
 
         Volley.newRequestQueue(this).add(request)
     }
+
+
 
     //FN INTENT QR
     private fun actQR() {
