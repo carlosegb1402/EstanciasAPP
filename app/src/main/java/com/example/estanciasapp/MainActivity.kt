@@ -1,13 +1,13 @@
 package com.example.estanciasapp
 
 import android.content.Intent
-import android.util.Log
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
@@ -20,10 +20,8 @@ import com.android.volley.toolbox.Volley
 import org.json.JSONException
 import org.json.JSONObject
 
-
 class MainActivity : AppCompatActivity() {
 
-    //VARIABLES
     private lateinit var etUsuario: EditText
     private lateinit var etContrasena: EditText
     private lateinit var btnEntrar: Button
@@ -31,59 +29,20 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recordarCB: CheckBox
     private lateinit var showPass: ImageButton
     private lateinit var loginPreferences: SharedPreferences
-    private lateinit var loginPrefEditor: SharedPreferences.Editor
-    private lateinit var db: DbHandler
-    private var saveLogin = false
+    private var pushed = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        //FN BOTON RETROCEDER
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                exitDialog()
-            }
-        })
-
-        //FN SHARED PREFERENCES
         loginPreferences = getSharedPreferences("loginPref", MODE_PRIVATE)
-        loginPrefEditor = loginPreferences.edit()
-        saveLogin = loginPreferences.getBoolean("saveLogin", false)
 
-        //INICIALIZAR COMPONENTES
         iniciarComponentes()
-        eventsBTN()
-
-        //FN RECORDAR USUARIO
-        if (saveLogin) {
-            etUsuario.setText(loginPreferences.getString("usuario", ""))
-            etContrasena.setText(loginPreferences.getString("contrasena", ""))
-            btnEntrar.isEnabled = true
-            recordarCB.isChecked = true
-        } else {
-            limpiarInputs()
-        }
-
-        //VALIDAR CAMPOS
-        val textWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                btnEntrar.isEnabled = etUsuario.text.isNotEmpty() && etContrasena.text.isNotEmpty()
-                showPass.isEnabled=etContrasena.text.isNotEmpty()
-                showPass.isVisible=etContrasena.text.isNotEmpty()
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        }
-
-        etUsuario.addTextChangedListener(textWatcher)
-        etContrasena.addTextChangedListener(textWatcher)
+        cargarSesionGuardada()
+        configurarListeners()
     }
 
-    //FN INICIALIZAR COMPONENTES
     private fun iniciarComponentes() {
         etUsuario = findViewById(R.id.etUsuario)
         etContrasena = findViewById(R.id.etcontrasena)
@@ -93,49 +52,82 @@ class MainActivity : AppCompatActivity() {
         showPass = findViewById(R.id.showPass)
     }
 
-    //FN EVENTOS BOTONES
-    private fun eventsBTN() {
-        btnEntrar.setOnClickListener { fnAcceder() }
-        btnSalir.setOnClickListener { exitDialog() }
-        showPass.setOnClickListener { showPass() }
-    }
+    private fun configurarListeners() {
+        val textWatcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-    private fun showPass() {
-        if (etContrasena.inputType==129){
-            etContrasena.inputType=144
-            showPass.setImageResource(R.drawable.show_pass)
-        }else{
-            etContrasena.inputType=129
-            showPass.setImageResource(R.drawable.show_pass_0)
-        }
-    }
-
-    //FN RECORDAR USUARIO
-    private fun fnRecordar() {
-        with(loginPrefEditor) {
-            if (recordarCB.isChecked) {
-                putBoolean("saveLogin", true)
-                putString("usuario", etUsuario.text.toString())
-                putString("contrasena", etContrasena.text.toString())
-            } else {
-                remove("usuario")
-                remove("contrasena")
-                putBoolean("saveLogin", false)
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                btnEntrar.isEnabled = etUsuario.text.isNotEmpty() && etContrasena.text.isNotEmpty()
+                showPass.isVisible = etContrasena.text.isNotEmpty()
             }
-            apply()
+
+            override fun afterTextChanged(s: Editable?) {}
+        }
+        etUsuario.addTextChangedListener(textWatcher)
+        etContrasena.addTextChangedListener(textWatcher)
+
+        btnEntrar.setOnClickListener {
+            guardarSesion()
+            verificarCredenciales()
+        }
+
+        btnSalir.setOnClickListener { exitDialog() }
+        showPass.setOnClickListener { toggleMostrarContrasena() }
+
+        etContrasena.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && !pushed && etContrasena.text.toString() == loginPreferences.getString("contrasena", "")) {
+                pushed = true
+                etContrasena.text.clear()
+            }
+        }
+
+        // Configurar retroceso con confirmación
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() { exitDialog() }
+        })
+
+    }
+
+    private fun toggleMostrarContrasena() {
+        val method = if (etContrasena.transformationMethod == android.text.method.PasswordTransformationMethod.getInstance()) {
+            android.text.method.HideReturnsTransformationMethod.getInstance()
+        } else {
+            android.text.method.PasswordTransformationMethod.getInstance()
+        }
+        etContrasena.transformationMethod = method
+        showPass.setImageResource(if (method == android.text.method.HideReturnsTransformationMethod.getInstance()) R.drawable.show_pass else R.drawable.show_pass_0)
+        etContrasena.setSelection(etContrasena.text.length)
+    }
+
+    private fun cargarSesionGuardada() {
+        val saveLogin = loginPreferences.getBoolean("saveLogin", false)
+        if (saveLogin) {
+            etUsuario.setText(loginPreferences.getString("usuario", ""))
+            etContrasena.setText(loginPreferences.getString("contrasena", ""))
+            btnEntrar.isEnabled = true
+            recordarCB.isChecked = true
+        } else {
+            limpiarInputs()
         }
     }
 
+    private fun guardarSesion() {
+        val editor = loginPreferences.edit()
+        if (recordarCB.isChecked) {
+            editor.putBoolean("saveLogin", true)
+            editor.putString("usuario", etUsuario.text.toString())
+            editor.putString("contrasena", etContrasena.text.toString())
+        } else {
+            editor.clear()
+        }
+        editor.apply()
+    }
 
-    //FN ACCEDER
-    private fun fnAcceder() {
-
+    private fun verificarCredenciales() {
         val loadingDialog = LoadingDialog(this)
         loadingDialog.startLoadingDialog()
 
-        val baseUrl = getString(R.string.base_url)
-        val url = "$baseUrl/verificarUsuario.php"
-
+        val url = getString(R.string.base_url) + "/verificarUsuario.php"
         val usuario = etUsuario.text.toString()
         val contrasena = etContrasena.text.toString()
 
@@ -143,63 +135,54 @@ class MainActivity : AppCompatActivity() {
             Response.Listener { response ->
                 try {
                     val jsonResponse = JSONObject(response)
-                    if (jsonResponse.getString("status") == "success") {
-                        fnRecordar()
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            loadingDialog.dismissDialog()
-                            actQR()
-                            showMSG("Verificación Exitosa")
-                        }, 1000)
-                    } else {
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            loadingDialog.dismissDialog()
-                            showMSG("Credenciales Invalidas")
-                        }, 800)
-                    }
-                } catch (e: JSONException) {
                     Handler(Looper.getMainLooper()).postDelayed({
-                        Log.e("JSONException", "Error en la respuesta del servidor: ${e.message}")
                         loadingDialog.dismissDialog()
-                        showMSG("Error En La Respuesta Del Servidor")
-                    }, 800)
+                        if (jsonResponse.getString("status") == "success") {
+                            iniciarActividadQR()
+                            showMSG("Verificación Exitosa")
+                        } else {
+                            showMSG("Credenciales Inválidas")
+                        }
+                    }, 1000)
+                } catch (e: JSONException) {
+                    mostrarError(loadingDialog, "Error en la respuesta del servidor: ${e.message}")
                 }
             },
             Response.ErrorListener {
-                Handler(Looper.getMainLooper()).postDelayed({
-                    Log.e("ErrorListener", "Error en la conexión: ${it.message}")
-                    loadingDialog.dismissDialog()
-                    showMSG("Hubo Un Error En La Conexion")
-                }, 800)
+                mostrarError(loadingDialog, "Hubo un error en la conexión: ${it.message}")
             }) {
 
-            override fun getParams(): Map<String, String> {
-                return hashMapOf("usuario" to usuario, "contrasena" to contrasena)
-            }
+            override fun getParams(): Map<String, String> = hashMapOf(
+                "usuario" to usuario,
+                "contrasena" to contrasena
+            )
         }
 
         Volley.newRequestQueue(this).add(request)
     }
 
+    private fun mostrarError(dialog: LoadingDialog, mensaje: String) {
+        Handler(Looper.getMainLooper()).postDelayed({
+            Log.e("Error", mensaje)
+            dialog.dismissDialog()
+            showMSG("Error en la conexión")
+        }, 800)
+    }
 
-
-    //FN INTENT QR
-    private fun actQR() {
+    private fun iniciarActividadQR() {
         startActivity(Intent(this, QR::class.java))
         finish()
     }
 
-    //FN LIMPIAR EDIT TEXT
     private fun limpiarInputs() {
         etUsuario.text.clear()
         etContrasena.text.clear()
     }
 
-    //FN MOSTRAR TOAST
     private fun showMSG(msg: String) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
-    //FN DIALOG EXIT
     private fun exitDialog() {
         AlertDialog.Builder(this)
             .setTitle("Aplicación")
@@ -209,6 +192,4 @@ class MainActivity : AppCompatActivity() {
             .setNegativeButton("No", null)
             .show()
     }
-
-
 }

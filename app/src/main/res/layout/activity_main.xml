@@ -60,18 +60,18 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp">
 
-                    <EditText
-                        android:id="@+id/etcontrasena"
-                        android:layout_width="match_parent"
-                        android:layout_height="48dp"
-                        android:background="@drawable/background_edit_text"
-                        android:fontFamily="@font/jetbrains_mono_semibold"
-                        android:hint="Contraseña"
-                        android:inputType="textPassword"
-                        android:text="12345"
-                        android:textAlignment="center"
-                        android:textColor="@color/principal"
-                        android:textSize="25dp" />
+                        <EditText
+                            app:passwordToggleEnabled="true"
+                            android:id="@+id/etcontrasena"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@drawable/background_edit_text"
+                            android:fontFamily="@font/jetbrains_mono_semibold"
+                            android:hint="Contraseña"
+                            android:inputType="textPassword"
+                            android:textAlignment="center"
+                            android:textColor="@color/principal"
+                            android:textSize="25dp" />
 
                     <ImageButton
                         android:visibility="gone"
