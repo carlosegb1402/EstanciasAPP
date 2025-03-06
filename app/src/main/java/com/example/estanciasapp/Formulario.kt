@@ -140,7 +140,7 @@ class Formulario : AppCompatActivity() {
 
     //FN OBTENER FECHA
     private fun obtenerFechaActual(): String {
-        val formatoFecha = SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.getDefault())
+        val formatoFecha = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val fechaActual = Calendar.getInstance().time
         return formatoFecha.format(fechaActual)
     }
@@ -191,7 +191,8 @@ class Formulario : AppCompatActivity() {
     //FN INSERTAR WS
    private fun sendToServer(falla: Fallas) {
 
-        limpiar(); loadingDialog.startLoadingDialog()
+        limpiar();
+        loadingDialog.startLoadingDialog()
 
         val baseUrl = ContextCompat.getString(this,R.string.base_url)
         val url = "$baseUrl/registrarFalla.php"

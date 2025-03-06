@@ -124,6 +124,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun verificarCredenciales() {
+
         val loadingDialog = LoadingDialog(this)
         loadingDialog.startLoadingDialog()
 
@@ -145,13 +146,14 @@ class MainActivity : AppCompatActivity() {
                         }
                     }, 1000)
                 } catch (e: JSONException) {
-                    mostrarError(loadingDialog, "Error en la respuesta del servidor: ${e.message}")
+                    mostrarError(loadingDialog, "Error en la respuesta del servidor")
+                    Log.e("Error Server", "${e.message}")
                 }
             },
             Response.ErrorListener {
-                mostrarError(loadingDialog, "Hubo un error en la conexión: ${it.message}")
+                mostrarError(loadingDialog, "Hubo un error en la conexión")
+                Log.e("Error Server", "${it.message}")
             }) {
-
             override fun getParams(): Map<String, String> = hashMapOf(
                 "usuario" to usuario,
                 "contrasena" to contrasena
@@ -163,9 +165,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun mostrarError(dialog: LoadingDialog, mensaje: String) {
         Handler(Looper.getMainLooper()).postDelayed({
-            Log.e("Error", mensaje)
             dialog.dismissDialog()
-            showMSG("Error en la conexión")
+            showMSG(mensaje)
         }, 800)
     }
 
