@@ -39,6 +39,7 @@
             android:textStyle="bold"></EditText>
 
         <TextView
+            android:layout_marginTop="10dp"
             android:fontFamily="@font/jetbrains_mono_semibold"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
@@ -51,7 +52,6 @@
             android:id="@+id/numeroET"
             android:layout_width="300dp"
             android:layout_height="50dp"
-            android:layout_marginTop="8dp"
             android:background="@drawable/background_edit_text"
             android:enabled="false"
             android:fontFamily="@font/jetbrains_mono_semibold"
@@ -63,6 +63,7 @@
             android:textStyle="bold"></EditText>
 
         <TextView
+            android:layout_marginTop="10dp"
             android:fontFamily="@font/jetbrains_mono_semibold"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
@@ -75,7 +76,6 @@
             android:id="@+id/modeloET"
             android:layout_width="300dp"
             android:layout_height="50dp"
-            android:layout_marginTop="8dp"
             android:background="@drawable/background_edit_text"
             android:enabled="false"
             android:fontFamily="@font/jetbrains_mono_semibold"
@@ -87,6 +87,7 @@
             android:textStyle="bold"></EditText>
 
         <TextView
+            android:layout_marginTop="10dp"
             android:fontFamily="@font/jetbrains_mono_semibold"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
@@ -99,7 +100,6 @@
             android:id="@+id/areaET"
             android:layout_width="300dp"
             android:layout_height="50dp"
-            android:layout_marginTop="8dp"
             android:background="@drawable/background_edit_text"
             android:enabled="false"
             android:fontFamily="@font/jetbrains_mono_semibold"
@@ -110,6 +110,7 @@
             android:textSize="20sp"
             android:textStyle="bold"></EditText>
         <TextView
+            android:layout_marginTop="10dp"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:fontFamily="@font/jetbrains_mono_semibold"
@@ -117,13 +118,11 @@
             android:textColor="@color/white"
             android:textSize="20sp"></TextView>
         <Spinner
-
             android:theme="@style/SpinnerTheme"
             android:entries="@array/estados_array"
             android:id="@+id/estFalloSP"
             android:layout_width="300dp"
             android:layout_height="50dp"
-            android:layout_marginTop="8dp"
             android:background="@drawable/background_edit_text"
             android:enabled="true"
             android:padding="5sp"
@@ -134,7 +133,7 @@
             android:id="@+id/observacionesET"
             android:layout_width="300dp"
             android:layout_height="100dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/background_edit_text"
             android:enabled="true"
             android:fontFamily="@font/jetbrains_mono_semibold"
@@ -173,24 +172,24 @@
                 android:layout_height="55dp"
                 android:layout_margin="5sp"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/background_btn_login"
+                android:background="@drawable/background_btn_form"
                 android:fontFamily="@font/jetbrains_mono_semibold"
                 android:text="Cancelar"
-                android:textColor="@color/white"
+                android:textColor="@color/principal"
                 android:textSize="20dp"></Button>
 
             <Button
                 android:textStyle="bold"
                 android:textAllCaps="false"
                 android:id="@+id/registrarBTN"
-                android:layout_width="120dp"
+                android:layout_width="160dp"
                 android:layout_height="55dp"
                 android:layout_margin="5sp"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/background_btn_login"
+                android:background="@drawable/background_btn_form"
                 android:fontFamily="@font/jetbrains_mono_semibold"
                 android:text="Registrar"
-                android:textColor="@color/white"
+                android:textColor="@color/principal"
                 android:textSize="20dp"></Button>
         </LinearLayout>
 
