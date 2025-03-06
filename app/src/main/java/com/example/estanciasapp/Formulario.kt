@@ -63,7 +63,6 @@ class Formulario : AppCompatActivity() {
 
 
     // Obtener información del intent
-// Obtener información del intent
     private fun obtenerInformacionEquipo() {
 
         val values = intent.getStringExtra("informacion")?.split(",") ?: listOf()
@@ -141,7 +140,7 @@ class Formulario : AppCompatActivity() {
 
     //FN OBTENER FECHA
     private fun obtenerFechaActual(): String {
-        val formatoFecha = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val formatoFecha = SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.getDefault())
         val fechaActual = Calendar.getInstance().time
         return formatoFecha.format(fechaActual)
     }
