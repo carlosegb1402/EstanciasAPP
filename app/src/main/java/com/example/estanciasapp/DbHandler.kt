@@ -29,15 +29,15 @@ class DbHandler(private var context: Context) : SQLiteOpenHelper(context, DATABA
 
     override fun onCreate(db: SQLiteDatabase?) {
         checkAndCreateTable(db)
-        createTableUsuarios(db)
-        insertUsuariosPorDefecto(db)
+       /* createTableUsuarios(db)*/
+/*      insertUsuariosPorDefecto(db)*/
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
 
     }
 
-    private fun createTableUsuarios(db: SQLiteDatabase?) {
+/*    private fun createTableUsuarios(db: SQLiteDatabase?) {
         val createTable = """
         CREATE TABLE $TABLE_NAME_USUARIOS (
             $COL_USER TEXT PRIMARY KEY,
@@ -46,9 +46,9 @@ class DbHandler(private var context: Context) : SQLiteOpenHelper(context, DATABA
     """.trimIndent()
         db?.execSQL(createTable)
         Log.d("DB", "Tabla $TABLE_NAME_USUARIOS creada exitosamente.")
-    }
+    }*/
 
-    private fun insertUsuariosPorDefecto(db: SQLiteDatabase?) {
+/*    private fun insertUsuariosPorDefecto(db: SQLiteDatabase?) {
         val defaultUsuarios = listOf(
             Pair("cegb1402", "cegb"),
             Pair("usuario2", "contrasena2"),
@@ -66,7 +66,7 @@ class DbHandler(private var context: Context) : SQLiteOpenHelper(context, DATABA
                 Log.d("DB", "Usuario por defecto insertado: ${usuario.first}")
             }
         }
-    }
+    }*/
 
     private fun checkAndCreateTable(db: SQLiteDatabase?) {
         val cursor = db?.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name='$TABLE_NAME_FALLAS'", null)

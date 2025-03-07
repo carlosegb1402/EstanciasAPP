@@ -44,7 +44,7 @@ class FnClass {
         val stringRequest = object : StringRequest(
             Method.POST, url,
             Response.Listener { response ->
-                if (response.contains("success")) {
+                if (response.contains("success") || response.contains("existing")) {
                     db.deleteFalla(falla.idfal)
                     enviarFallaSecuencialmente(context,fallasList, index + 1, db)
                 } else {

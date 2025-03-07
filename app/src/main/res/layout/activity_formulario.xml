@@ -130,6 +130,7 @@
             android:textColor="@color/black"></Spinner>
 
         <EditText
+            android:textAlignment="center"
             android:id="@+id/observacionesET"
             android:layout_width="300dp"
             android:layout_height="100dp"
@@ -138,11 +139,10 @@
             android:enabled="true"
             android:fontFamily="@font/jetbrains_mono_semibold"
             android:hint="Observaciones"
-            android:inputType="text"
+            android:inputType="textMultiLine"
             android:padding="5sp"
-            android:textAlignment="center"
             android:textColor="@color/black"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold"></EditText>
 
         <LinearLayout
@@ -176,7 +176,8 @@
                 android:fontFamily="@font/jetbrains_mono_semibold"
                 android:text="Cancelar"
                 android:textColor="@color/principal"
-                android:textSize="20dp"></Button>
+                android:textSize="20dp"
+                ></Button>
 
             <Button
                 android:textStyle="bold"

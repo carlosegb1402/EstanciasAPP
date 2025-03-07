@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -200,14 +201,26 @@ class Formulario : AppCompatActivity() {
         val stringRequest = object : StringRequest(
             Method.POST, url,
             Response.Listener { response ->
-                if (response.contains("success")){
-
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        loadingDialog.dismissDialog()
-                        FnClass().showToast(this, "Registro Exitoso")
-                        actQR()
-                    }, 1000)
-
+                when {
+                    response.contains("success") -> {
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            loadingDialog.dismissDialog()
+                            FnClass().showToast(this, "Registro Exitoso")
+                        }, 1000)
+                    }
+                    response.contains("existing") -> {
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            loadingDialog.dismissDialog()
+                            FnClass().showToast(this, "Registro Duplicado El Día De Hoy")
+                        }, 500)
+                    }
+                    response.contains("error") -> {
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            loadingDialog.dismissDialog()
+                            Log.e("ErrorSQL","Error de registro: $response")
+                            FnClass().showToast(this, "Syntax Error")
+                        }, 500)
+                    }
                 }
             },
             Response.ErrorListener { _ ->
